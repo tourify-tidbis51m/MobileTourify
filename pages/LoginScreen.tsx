@@ -1,12 +1,14 @@
 import React from 'react';
-import { ImageBackground, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { ImageBackground, StyleSheet, Dimensions, Image } from 'react-native';
 import LoginForm from '../components/LoginForm';
+
+const { width, height } = Dimensions.get('window'); //Agarre los objetos de esas madres y lo pase por la dimensión de la screen
 
 const LoginScreen = () => {
     return (
         <ImageBackground style={styles.background}>
-        <LoginForm/>
+            <Image source={require('../assets/logo.png')} style={styles.logo} />
+            <LoginForm />
         </ImageBackground>
     );
 };
@@ -18,6 +20,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#151E3D',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    logo: {
+        width: width * .4,
+        height: height * .4,
+        resizeMode: 'center',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: "-4%", 
     },
 });
 
