@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Animated, TextInput, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-const LoginForm = () => {
+const RegisterForm = () => {
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const handlePressIn = () => {
@@ -21,6 +21,8 @@ const LoginForm = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.labelTitle}>TOURIFY</Text>
+            <Text style={styles.label}>Ingresa tu nombre:</Text>
+            <TextInput style={styles.input} />
             <Text style={styles.label}>Ingresa tu correo:</Text>
             <TextInput style={styles.input} />
             <Text style={styles.label}>Ingresa tu contraseña:</Text>
@@ -31,18 +33,18 @@ const LoginForm = () => {
                 style={styles.buttonContainer}
             >
                 <Animated.View style={[styles.button, { transform: [{ scale: scaleAnim }] }]}>
-                    <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
+                    <Text style={styles.buttonText}>REGISTRARSE</Text>
                 </Animated.View>
             </TouchableOpacity>
             <TouchableOpacity
                 onPressIn={handlePressIn}
                 onPress={() => {
-                    navigation.navigate('RegisterScreen')
+                    navigation.navigate('LoginScreen');
                 }}
                 style={styles.buttonContainer}
             >
                 <Animated.View style={[styles.buttonRegister, { transform: [{ scale: scaleAnim }] }]}>
-                    <Text style={styles.buttonText}>¿Todavía no tienes una cuenta?</Text>
+                    <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
                 </Animated.View>
             </TouchableOpacity>
         </View>
@@ -119,4 +121,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LoginForm;
+export default RegisterForm;
