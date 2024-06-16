@@ -32,7 +32,9 @@ const LoginScreen = ({ navigation }) => {
             <TextInput style={styles.input} secureTextEntry />
             <TouchableOpacity
                 onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onPress={() => {
+                    navigation.navigate('MainMenu')
+                }}
                 style={styles.buttonContainer}
             >
                 <Animated.View style={[styles.button, { transform: [{ scale: scaleAnim }] }]}>
