@@ -8,7 +8,7 @@ const RegisterScreen = ({ navigation }) => {
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 1,
+      toValue: 0.95,
       useNativeDriver: true,
     }).start();
   };
@@ -26,11 +26,11 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.labelTitle}>TOURIFY</Text>
         <Text style={styles.label}>Ingresa tu nombre:</Text>
-        <TextInput style={styles.input} />
+        <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#B0B0B0" />
         <Text style={styles.label}>Ingresa tu correo:</Text>
-        <TextInput style={styles.input} />
+        <TextInput style={styles.input} placeholder="Correo" placeholderTextColor="#B0B0B0" />
         <Text style={styles.label}>Ingresa tu contraseña:</Text>
-        <TextInput style={styles.input} secureTextEntry />
+        <TextInput style={styles.input} placeholder="Contraseña" placeholderTextColor="#B0B0B0" secureTextEntry />
         <TouchableOpacity
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -41,110 +41,88 @@ const RegisterScreen = ({ navigation }) => {
           </Animated.View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPressIn={handlePressIn}
           onPress={() => {
-          navigation.navigate('Login');
-        }}
-                style={styles.buttonContainer}
-            >
-                <Animated.View style={[styles.buttonRegister, { transform: [{ scale: scaleAnim }] }]}>
-                    <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
-                </Animated.View>
-            </TouchableOpacity>
-        </View>
+            navigation.navigate('Login');
+          }}
+          style={styles.buttonContainer}
+        >
+          <Animated.View style={[styles.buttonSecondary, { transform: [{ scale: scaleAnim }] }]}>
+            <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
     </ImageBackground>
-);
+  );
 };
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'repeat',
-    backgroundColor: '#151E3D',
+    resizeMode: 'cover',
+    backgroundColor: '#0D1B2A',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
     width: width,
     height: height,
-
-},
-logo: {
-    width: width * .4,
-    height: height * .4,
-    resizeMode: 'center',
-    position: 'absolute',
-    justifyContent: 'center',
+  },
+  logo: {
+    width: width * 0.3,
+    height: height * 0.2,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  container: {
+    backgroundColor: '#E0E1DD',
+    padding: 20,
+    borderRadius: 10,
+    width: '90%',
     alignItems: 'center',
-    top: "-4%", 
-},
-container: {
-  backgroundColor: '#F6F4F7',
-  padding: 20,
-  borderRadius: 10,
-  color: 'black',
-  gap: 16,
-  height: '66%',
-  width: '100%',
-  position: 'absolute',
-  bottom: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center'
-},
-label: {
-  fontSize: 23,
-  marginBottom: -20,
-  alignItems: 'center',
-  justifyContent: 'center',
-  display: 'flex',
-  flexDirection: 'column',
-  fontFamily: 'system-ui',
-  fontWeight: 'bold',
-  top: -30
-},
-input: {
-  height: 40,
-  borderColor: 'gray',
-  marginBottom: 40,
-  paddingHorizontal: 10,
-  borderBottomWidth: 3,
-},
-button: {
-  backgroundColor: 'blue',
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 5,
-  alignItems: 'center',
-},
-buttonRegister: {
-  backgroundColor: '#3B05FF',
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 5,
-  alignItems: 'center',
-},
-buttonText: {
-  color: 'white',
-  fontWeight: 'bold',
-  fontFamily: 'Sans-Serif, Lucida Sans',
-  fontSize: 20,
-},
-buttonContainer: {
-  borderRadius: 5,
-  overflow: 'hidden',
-  top: -22
-},
-labelTitle: {
-  color: 'blue',
-  fontWeight: 'bold',
-  fontFamily: 'Sans-Serif, Lucida Sans',
-  fontSize: 50,
-  justifyContent: 'center',
-  display: 'flex',
-  top: -40,
-  bottom: 10
-}
+  },
+  labelTitle: {
+    color: '#1B263B',
+    fontWeight: 'bold',
+    fontSize: 36,
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#1B263B',
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  input: {
+    height: 40,
+    borderColor: '#415A77',
+    borderBottomWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    width: '100%',
+    color: '#1B263B',
+  },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#1B263B',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonSecondary: {
+    backgroundColor: '#203e4a',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#E0E1DD',
+    fontWeight: 'bold',
+    fontSize: 18,
+    textAlign: 'center',
+  },
 });
-
 
 export default RegisterScreen;
