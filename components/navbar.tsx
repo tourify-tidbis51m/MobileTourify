@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         padding: 20,
-        backgroundColor: '#151E3D', 
+        backgroundColor: '#0D1B2A', 
         position: 'absolute', 
         top: 0, 
     },
