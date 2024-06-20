@@ -1,6 +1,5 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Image, Dimensions, ImageBackground, Animated, TextInput, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
@@ -16,6 +15,9 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [passwordVerify, setPasswordVerify] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [passwordConfirmVerify, setPasswordConfirmVerify] = useState(false);
+  const [passwordConfirmError, setPasswordConfirmError] = useState('');
 
   //Animaciones
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -42,13 +44,6 @@ const RegisterScreen = ({ navigation }) => {
     setEmailError('');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // ^: esto indica el inicio del string
-    // [^\s@]: Los corchetes indican lo q se permite, el ^ indica cualquier caracter que no este en el conjunto
-    // \s indica cualquier caracter de espacio en blanco
-    // @: indica que el string debe contener un arroba
-    // [^\s@]+\.[^\s@]+: indica que el string no debe contener espacios ni caracteres de signo de puntuacion y debe contener un punto seguido de una cadena de caracteres
-    // $: esto indica el final del string
-    //Nmms tuve q buscar que significaba cada uno pq si no ni de pedo se q significan JAJAJJAJA
     if (!emailRegex.test(emailVar)) {
       setEmailError('El correo no es válido.');
     } else if (emailVar.length > 1) {
@@ -69,9 +64,22 @@ const RegisterScreen = ({ navigation }) => {
     }
   }
 
+  const handlePasswordConfirm = (e) => {
+    const passwordConfirmVar = e.nativeEvent.text;
+    setPasswordConfirm(passwordConfirmVar);
+    setPasswordConfirmVerify(false);
+    setPasswordConfirmError('');
+
+    if (passwordConfirmVar !== password) {
+      setPasswordConfirmError('Las contraseñas no coinciden.');
+    } else if (passwordConfirmVar.length > 1) {
+      setPasswordConfirmVerify(true);
+    }
+  }
+
   //Funcion para validar el formulario
   const isFormValid = () => {
-    return nameVerify && emailVerify && passwordVerify && !nameError && !emailError && !passwordError;
+    return nameVerify && emailVerify && passwordVerify && passwordConfirmVerify && !nameError && !emailError && !passwordError && !passwordConfirmError;
   }
 
   //Funciones de animaciones
@@ -92,7 +100,9 @@ const RegisterScreen = ({ navigation }) => {
   //Renderizado
   return (
     <ImageBackground style={styles.background}>
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <View style={styles.logoContainer}>
+        <Image source={require('../assets/logo.png')} style={styles.logo} />
+      </View>
       <View style={styles.container}>
         <Text style={styles.labelTitle}>TOURIFY</Text>
         
@@ -107,7 +117,7 @@ const RegisterScreen = ({ navigation }) => {
           {name.length >= 1 && !nameError && (
             <MaterialIcons 
               name="check-circle" 
-              size={40} 
+              size={20} 
               color="green" 
               style={styles.icon} 
             />
@@ -115,21 +125,14 @@ const RegisterScreen = ({ navigation }) => {
           {nameError && (
             <MaterialIcons 
               name="error" 
-              size={40} 
+              size={20} 
               color="red" 
               style={styles.icon} 
             />
           )}
         </View>
         {nameError && (
-          <Text
-            style={{
-              marginLeft: 20,
-              color: 'red',
-              bottom: 10,
-            }}>
-            {nameError}
-          </Text>
+          <Text style={styles.errorText}>{nameError}</Text>
         )}
 
         <Text style={styles.label}>Ingresa tu correo:</Text>
@@ -143,7 +146,7 @@ const RegisterScreen = ({ navigation }) => {
           {email.length >= 1 && !emailError && (
             <MaterialIcons
               name="check-circle"
-              size={40}
+              size={20}
               color="green"
               style={styles.icon}
             />
@@ -151,21 +154,14 @@ const RegisterScreen = ({ navigation }) => {
           {emailError && (
             <MaterialIcons
               name="error"
-              size={40}
+              size={20}
               color="red"
               style={styles.icon}
             />
           )}
         </View>
         {emailError && (
-          <Text
-            style={{
-              marginLeft: 20,
-              color: 'red',
-              bottom: 10,
-            }}>
-            {emailError}
-          </Text>
+          <Text style={styles.errorText}>{emailError}</Text>
         )}
 
         <Text style={styles.label}>Ingresa tu contraseña:</Text>
@@ -180,7 +176,7 @@ const RegisterScreen = ({ navigation }) => {
           {password.length >= 1 && !passwordError && (
             <MaterialIcons
               name="check-circle"
-              size={40}
+              size={20}
               color="green"
               style={styles.icon}
             />
@@ -188,21 +184,44 @@ const RegisterScreen = ({ navigation }) => {
           {passwordError && (
             <MaterialIcons
               name="error"
-              size={40}
+              size={20}
               color="red"
               style={styles.icon}
             />
           )}
         </View>
         {passwordError && (
-          <Text
-            style={{
-              marginLeft: 20,
-              color: 'red',
-              bottom: 10,
-            }}>
-            {passwordError}
-            </Text>
+          <Text style={styles.errorText}>{passwordError}</Text>
+        )}
+
+        <Text style={styles.label}>Repite tu contraseña:</Text>
+        <View style={styles.inputContainer}>
+          <TextInput 
+            style={styles.input} 
+            placeholder="Contraseña repetida" 
+            placeholderTextColor="#B0B0B0" 
+            secureTextEntry 
+            onChange={handlePasswordConfirm}
+          />
+          {passwordConfirm.length >= 1 && !passwordConfirmError && (
+            <MaterialIcons
+              name="check-circle"
+              size={20}
+              color="green"
+              style={styles.icon}
+            />
+          )}
+          {passwordConfirmError && (
+            <MaterialIcons
+              name="error"
+              size={20}
+              color="red"
+              style={styles.icon}
+            />
+          )}
+        </View>
+        {passwordConfirmError && (
+          <Text style={styles.errorText}>{passwordConfirmError}</Text>
         )}
         
         <TouchableOpacity
@@ -223,7 +242,7 @@ const RegisterScreen = ({ navigation }) => {
           style={styles.buttonContainer}
         >
           <Animated.View style={[styles.buttonSecondary, { transform: [{ scale: scaleAnim }] }]}>
-            <Text style={styles.buttonText}>¿Ya tienes una cuenta?</Text>
+            <Text style={styles.buttonTextSecondary}>¿Ya tienes una cuenta?</Text>
           </Animated.View>
         </TouchableOpacity>
       </View>
@@ -241,11 +260,14 @@ const styles = StyleSheet.create({
     width: width,
     height: height,
   },
+  logoContainer: {
+    alignItems: 'center',
+    top: 120
+  },
   logo: {
     width: width * 0.3,
     height: height * 0.2,
     resizeMode: 'contain',
-    marginBottom: 10,
   },
   container: {
     backgroundColor: '#E0E1DD',
@@ -253,11 +275,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     alignItems: 'center',
+    marginTop: -200
   },
   labelTitle: {
     color: '#1B263B',
     fontWeight: 'bold',
-    fontSize: 36,
+    fontSize: 24,
     marginBottom: 20,
   },
   label: {
@@ -299,6 +322,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  buttonTextSecondary: {
+    color: '#E0E1DD',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -307,8 +336,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginLeft: 10,
-    marginBottom: 20,
+  },
+  errorText: {
+    marginLeft: 20,
+    color: 'red',
+    bottom: 10,
   }
 });
 
 export default RegisterScreen;
+

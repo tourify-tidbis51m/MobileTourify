@@ -1,9 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Animated, TextInput, Text, View, TouchableOpacity, ImageBackground, StyleSheet, Dimensions, Image } from 'react-native';
+import useAuth from '../hooks/useAuth';
 
 const { width, height } = Dimensions.get('screen');
 
 const LoginScreen = ({ navigation }) => {
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const { login } = useAuth();
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -21,15 +27,29 @@ const LoginScreen = ({ navigation }) => {
         }).start();
     };
 
+    const handleLogin = async () => {
+        await login(username, password);
+    };
+
     return (
         <ImageBackground style={styles.background}>
             <Image source={require('../assets/logo.png')} style={styles.logo} />
             <View style={styles.container}>
                 <Text style={styles.labelTitle}>TOURIFY</Text>
                 <Text style={styles.label}>Ingresa tu correo:</Text>
-                <TextInput style={styles.input} placeholder="Correo" placeholderTextColor="#B0B0B0" />
+                <TextInput 
+                    style={styles.input} 
+                    placeholder="Correo" 
+                    placeholderTextColor="#B0B0B0"
+                    onChange={setUsername}
+                    />
                 <Text style={styles.label}>Ingresa tu contraseña:</Text>
-                <TextInput style={styles.input} placeholder="Contraseña" placeholderTextColor="#B0B0B0" secureTextEntry />
+                <TextInput 
+                    style={styles.input} 
+                    placeholder="Contraseña" 
+                    placeholderTextColor="#B0B0B0"
+                    onChange={setPassword} 
+                    secureTextEntry />
                 <TouchableOpacity
                     onPressIn={handlePressIn}
                     onPressOut={handlePressOut}
@@ -41,6 +61,7 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
+                        handleLogin
                         navigation.navigate('Register')
                     }}
                     style={styles.buttonContainer}
