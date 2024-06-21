@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Dimensions, Image } from 'react-native';
 import NavBar from '../components/navbar';
-
+import TitleButton from '../components/titlebutton'; // Asegúrate de que el componente está exportado correctamente
 // Importa las imágenes locales
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';
@@ -38,7 +38,7 @@ const MainMenu = ({ navigation }) => {
 
     return (
         <View style={styles.background}>
-            <NavBar />
+            <TitleButton/>
             <View style={styles.content}>
                 <Carousel
                     loop
@@ -66,6 +66,7 @@ const MainMenu = ({ navigation }) => {
                     </Animated.View>
                 </TouchableOpacity>
             </View>
+            <NavBar/>
         </View>
     );
 };
