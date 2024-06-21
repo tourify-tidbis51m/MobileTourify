@@ -23,7 +23,10 @@ const SplashScreen = ({ navigation }) => {
         // Cambiar a la pantalla principal después de 3 segundos
         setTimeout(() => {
             spinAnimation.stop();
-            navigation.navigate('Login'); // Reemplazar 'MainScreen' con el nombre de tu pantalla principal
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }], 
+            });
         }, 3000);
     }, [navigation, spinValue]);
 
