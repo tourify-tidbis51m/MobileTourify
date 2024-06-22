@@ -1,9 +1,10 @@
-import React from 'react';
-//import LoginScreen from './pages/LoginScreen';
-import AppNavigator from './routes/AppNavigator';
-export default function App() {
-  return(
-      <AppNavigator />
-  ) 
-}
+import Router from "./routes/Router";
+import { AuthProvider } from "./providers/authProvider";
 
+export default function App() {
+  return ( 
+  <AuthProvider>
+    <Router />
+  </AuthProvider>
+  )
+}
