@@ -4,7 +4,7 @@ import useAuth from '../hooks/useAuth';
 
 const { width, height } = Dimensions.get('screen');
 
-const LoginScreen = ({ navigation }) => {
+const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -151,5 +151,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default Login;
 

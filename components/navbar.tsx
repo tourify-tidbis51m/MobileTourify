@@ -1,25 +1,36 @@
-import React from "react";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
+    const navigation = useNavigation();
+
     return (
         <View style={styles.navbarContainer}>
             <View style={styles.navbar}>
-                {Array(5).fill(null).map((_, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.navButton,
-                            index === 2 && styles.navButtonCenter, // Botón central más grande
-                        ]}
-                    >
-                        {/* Puedes agregar íconos o texto dentro de los botones aquí */}
-                    </TouchableOpacity>
-                ))}
+                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
+                    <Image source={require('../assets/home_icon.png')} style={styles.icon} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Events')}>
+                    <Image source={require('../assets/events_icon.png')} style={styles.icon} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.navButton, styles.navButtonCenter]} onPress={() => navigation.navigate('Profile')}>
+                    <Image source={require('../assets/user_icon.png')} style={styles.icon} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Game')}>
+                    <Image source={require('../assets/control_icon.png')} style={styles.icon} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Map')}>
+                    <Image source={require('../assets/map_icon.png')} style={styles.icon} />
+                </TouchableOpacity>
             </View>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     navbarContainer: {
@@ -51,7 +62,14 @@ const styles = StyleSheet.create({
     navButtonCenter: {
         width: 80, 
         height: 80,
-        borderRadius: 45,
+        borderRadius: 40,
+    },
+    navButtonPressed: {
+        borderColor: 'white',
+    },
+    icon: {
+        width: 24,
+        height: 24,
     },
 });
 

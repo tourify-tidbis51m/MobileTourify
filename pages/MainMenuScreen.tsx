@@ -2,15 +2,15 @@ import React, { useRef } from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Dimensions, Image } from 'react-native';
 import NavBar from '../components/navbar';
-import TitleButton from '../components/titlebutton'; // Asegúrate de que el componente está exportado correctamente
-// Importa las imágenes locales
+import TitleButton from '../components/titlebutton'; 
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';
 import image3 from '../assets/image3.jpg';
 
-const MainMenu = ({ navigation }) => {
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
-    const width = Dimensions.get('window').width;
+const MainMenu = ({ navigation }) => {
 
     // Array de importaciones de imágenes locales
     const imagePaths = [
@@ -34,6 +34,7 @@ const MainMenu = ({ navigation }) => {
             toValue: 1,
             useNativeDriver: true,
         }).start();
+        navigation.navigate('Map')
     };
 
     return (
@@ -45,28 +46,32 @@ const MainMenu = ({ navigation }) => {
                     width={width}
                     height={width / 2}
                     autoPlay={true}
-                    autoPlayInterval={3000} // Cambia las imágenes cada 3 segundos
+                    autoPlayInterval={2000}
                     data={imagePaths}
                     scrollAnimationDuration={1000}
+                    panGestureHandlerProps={{
+                        activeOffsetX: [-10, 10],
+                    }}
                     renderItem={({ item }) => (
                         <View style={styles.carouselItem}>
                             <Image source={item} style={styles.carouselImage} />
                         </View>
                     )}
                 />
-                <Text style={styles.Phrase}>"Descubre la magia de cada destino."</Text>
-                <Text style={styles.Text}>Explora lo inexplorado, experimenta lo extraordinario y deja que tus viajes se conviertan en el lienzo de tu historia única</Text>            
-                <TouchableOpacity
-                    onPressIn={handlePressIn}
-                    onPressOut={handlePressOut}
-                    style={styles.buttonContainer}
-                >
-                    <Animated.View style={[styles.buttonStart, { transform: [{ scale: scaleAnim }] }]}>
-                        <Text style={styles.buttonText}>Explorar ahora →</Text>
-                    </Animated.View>
-                </TouchableOpacity>
+                <View style={styles.textContainer}>
+                    <Text style={styles.Phrase}>"Descubre la magia de cada destino."</Text>
+                    <Text style={styles.Text}>Explora lo inexplorado, experimenta lo extraordinario y deja que tus viajes se conviertan en el lienzo de tu historia única</Text>            
+                    <TouchableOpacity
+                        onPressIn={handlePressIn}
+                        onPressOut={handlePressOut}
+                        style={styles.buttonContainer}
+                    >
+                        <Animated.View style={[styles.buttonStart, { transform: [{ scale: scaleAnim }] }]}>
+                            <Text style={styles.buttonText}>Explorar ahora →</Text>
+                        </Animated.View>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <NavBar/>
         </View>
     );
 };
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 120, 
+        marginTop: 100, 
     },
     carouselItem: {
         flex: 1,
@@ -96,12 +101,18 @@ const styles = StyleSheet.create({
         height: '100%',
         resizeMode: 'cover',
     },
+    textContainer: {
+        height: height * 0.4,
+        width: width * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     Phrase: {
         color: "white",
         fontSize: 30,
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: 200, 
+        marginTop: 20, 
     },
     Text: {
         color: "gray",
