@@ -3,8 +3,8 @@ import { AuthProvider } from "./providers/AuthProvider";
 
 export default function App() {
   return ( 
-      <AuthProvider>
-        <Router />
-      </AuthProvider>
+    <AuthProvider>
+      <Router />
+    </AuthProvider>
   )
 }

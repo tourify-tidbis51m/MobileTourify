@@ -31,7 +31,7 @@ const SplashScreen = ({ navigation }) => {
         const spinAnimation = Animated.loop(
             Animated.timing(spinValue, {
                 toValue: 2,
-                duration: 5000, // Duración de un giro completo (en milisegundos)
+                duration: 6000, // Duración de un giro completo (en milisegundos)
                 useNativeDriver: true,
             })
         );
@@ -46,7 +46,7 @@ const SplashScreen = ({ navigation }) => {
                 index: 0,
                 routes: [{ name: 'Login' }],
             });
-        }, 3000);
+        }, 6000);
     }, [navigation, spinValue]);
 
     // Interpolación para girar 360 grados

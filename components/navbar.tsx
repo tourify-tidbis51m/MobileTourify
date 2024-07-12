@@ -20,8 +20,8 @@ const NavBar = () => {
                     <Image source={require('../assets/user_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Game')}>
-                    <Image source={require('../assets/control_icon.png')} style={styles.icon} />
+                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Places')}>
+                    <Image source={require('../assets/places_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Map')}>

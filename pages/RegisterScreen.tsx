@@ -1,8 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { Image, Dimensions, ImageBackground, Animated, TextInput, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { AuthContext } from '../providers/AuthProvider';
 
 const { width, height } = Dimensions.get('window');
+
+
 const RegisterScreen = ({ navigation }) => {
 
   //Constantes que uso principalmente para controlar las validaciones
@@ -18,6 +21,7 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [passwordConfirmVerify, setPasswordConfirmVerify] = useState(false);
   const [passwordConfirmError, setPasswordConfirmError] = useState('');
+  const { register } = useContext(AuthContext);
 
   //Animaciones
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -97,6 +101,10 @@ const RegisterScreen = ({ navigation }) => {
     }).start();
   };
 
+  const handleRegister = async () => {
+    await register(name, email, password);
+  };
+
   //Renderizado
   return (
     <ImageBackground style={styles.background}>
@@ -113,6 +121,7 @@ const RegisterScreen = ({ navigation }) => {
             placeholder="Nombre" 
             placeholderTextColor="#B0B0B0"
             onChange={handleName}
+            value={name}
           />
           {name.length >= 1 && !nameError && (
             <MaterialIcons 
@@ -142,6 +151,7 @@ const RegisterScreen = ({ navigation }) => {
             placeholder="Correo" 
             placeholderTextColor="#B0B0B0"
             onChange={handleEmail}
+            value={email}
           />
           {email.length >= 1 && !emailError && (
             <MaterialIcons
@@ -172,6 +182,7 @@ const RegisterScreen = ({ navigation }) => {
             placeholderTextColor="#B0B0B0" 
             secureTextEntry 
             onChange={handlePassword}
+            value={password}
           />
           {password.length >= 1 && !passwordError && (
             <MaterialIcons
@@ -229,6 +240,7 @@ const RegisterScreen = ({ navigation }) => {
           onPressOut={handlePressOut}
           style={styles.buttonContainer}
           disabled={!isFormValid()}
+          onPress={handleRegister}
         >
           <Animated.View style={[styles.button, { transform: [{ scale: scaleAnim }] }]}>
             <Text style={styles.buttonText}>REGISTRARSE</Text>

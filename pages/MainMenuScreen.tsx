@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Dimensions, Image } from 'react-native';
-import NavBar from '../components/navbar';
 import TitleButton from '../components/titlebutton'; 
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';

@@ -1,9 +1,13 @@
 import React from "react";
 import { TouchableOpacity, View, Image, Text, StyleSheet } from "react-native";
+import useAuth from "../hooks/useAuth";
 
 const titlebutton = () => {
+
+    const { logout } = useAuth();
+
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={logout}>
             <View style={styles.containter}>
                 <Image source={require('../assets/logo.png')} style={styles.logo} />
                 <Text style={styles.title}> Tourify</Text>
@@ -19,7 +23,8 @@ const styles = StyleSheet.create({
         width: '60%',
         padding: 20,
         position: 'absolute', 
-        top: 20, 
+        top: 20,
+        bottom: 10, 
     },
     title: {
         fontSize: 30,

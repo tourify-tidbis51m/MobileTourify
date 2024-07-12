@@ -33,12 +33,25 @@ function AuthProvider({ children }) {
 
     async function login(email, password) {
         setLoading(true);
-        const _user = await authService(email, password);
+        const _user = await authService.login(email, password);
 
         setUser(_user);
         if (_user) {
         await AsyncStorage.setItem("@authData", JSON.stringify(_user));
         console.log({ _user });
+        }
+
+        setLoading(false);
+    }
+
+    async function register(name, email, password) {
+        setLoading(true);
+        const _user = await authService.register(name, email, password);
+
+        setUser(_user);
+        if (_user) {
+            await AsyncStorage.setItem("@authData", JSON.stringify(_user));
+            console.log({ _user });
         }
 
         setLoading(false);
@@ -55,7 +68,7 @@ function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, register, login, logout }}>
         {children}
         </AuthContext.Provider>
     );

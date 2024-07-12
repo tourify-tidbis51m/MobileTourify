@@ -2,24 +2,23 @@ import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import useAuth from '../hooks/useAuth';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
     const { user, logout } = useAuth();
+    const navigation = useNavigation();
 
     return (
         <View style={styles.background}>
             <View style={styles.content}>
                 <FontAwesome5 name="user-injured" style={styles.icon} />
-                <Text style={styles.Phrase}>¡Bienvenido {user?.role || 'role'}, {user?.name || 'Usuario'}!</Text>
+                <Text style={styles.Phrase}>¡Bienvenido, {user?.name || 'Usuario'}!</Text>
                 <Text style={styles.Text}>Correo electrónico: {user?.email || 'No disponible'}</Text>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title="Cerrar sesión"
-                        onPress={logout}
-                        color="#203e4a"
-                    />
-                </View>
             </View>
+            <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
+                <Text style={styles.settingsButtonText}>Settings</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -68,6 +67,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
     },
+    settingsButton: {
+        flex : 1,
+        alignSelf: 'center',
+        backgroundColor: '#203e4a',
+        borderRadius: 8,
+        padding: 19,
+        marginTop: 20,
+        width: '80%',
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    settingsButtonText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    }
 });
 
 export default Profile;

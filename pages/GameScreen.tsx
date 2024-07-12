@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Dimensions, Alert } from 'react-native';
 
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
+const { width, height } = Dimensions.get('screen');
 
 const Game = () => {
     const [selectedLetters, setSelectedLetters] = useState(['', '', '', '', '']);
-    const letters = ['L', 'W', 'O', 'C', 'N'];
+    const [availableLetters, setAvailableLetters] = useState(['L', 'W', 'O', 'C', 'N']);
+    const correctWord = 'CLOWN';
 
     const handleLetterClick = (letter) => {
         const index = selectedLetters.indexOf('');
@@ -14,7 +14,30 @@ const Game = () => {
             const newSelectedLetters = [...selectedLetters];
             newSelectedLetters[index] = letter;
             setSelectedLetters(newSelectedLetters);
+
+            const newAvailableLetters = availableLetters.filter((l) => l !== letter);
+            setAvailableLetters(newAvailableLetters);
         }
+    };
+
+    useEffect(() => {
+        if (selectedLetters.every(letter => letter !== '')) {
+            checkWord();
+        }
+    }, [selectedLetters]);
+
+    const checkWord = () => {
+        if (selectedLetters.join('') === correctWord) {
+            Alert.alert('Correct!', 'You have spelled the word correctly!');
+        } else {
+            Alert.alert('Try Again', 'The word is not correct. Try again!');
+            resetGame();
+        }
+    };
+
+    const resetGame = () => {
+        setSelectedLetters(['', '', '', '', '']);
+        setAvailableLetters(['L', 'W', 'O', 'C', 'N']);
     };
 
     return (
@@ -34,7 +57,7 @@ const Game = () => {
                     ))}
                 </View>
                 <View style={styles.letters}>
-                    {letters.map((letter, index) => (
+                    {availableLetters.map((letter, index) => (
                         <TouchableOpacity
                             key={index}
                             style={styles.letterButton}
@@ -53,66 +76,59 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         backgroundColor: '#0D1B2A',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     header: {
-        marginBottom: 20,
+        paddingTop: 40,
+        paddingBottom: 20,
+        alignItems: 'center',
     },
     title: {
-        color: 'white',
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 'bold',
+        color: 'white',
     },
     gameContainer: {
-        width: width * 0.8,
-        height: height * 0.6,
-        position: 'relative',
-        backgroundColor: '#203e4a',
-        borderRadius: 10,
-        padding: 20,
-        justifyContent: 'center',
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     imageContainer: {
         marginBottom: 20,
     },
     clownImage: {
-        fontSize: 100,
+        fontSize: 64,
     },
     letterBoxes: {
         flexDirection: 'row',
         marginBottom: 20,
     },
     letterBox: {
-        borderWidth: 2,
-        borderColor: 'white',
-        width: 40,
-        height: 40,
+        width: 60,
+        height: 60,
+        margin: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 5,
+        backgroundColor: '#203e4a',
+        borderRadius: 10,
     },
     letterText: {
+        fontSize: 24,
         color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
     },
     letters: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
     },
     letterButton: {
-        backgroundColor: '#203e4a',
-        padding: 10,
+        width: 60,
+        height: 60,
         margin: 5,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-    },
+        backgroundColor: '#3b6978',
+        borderRadius: 10,
+    }
 });
 
 export default Game;
