@@ -64,7 +64,7 @@ const SplashScreen = ({ navigation }) => {
 
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>¿SABÍAS QUÉ?</Text>
-                <FontAwesome5 name="lightbulb" style={styles.icon} /> {/* Icono de FontAwesome5 */}
+                <FontAwesome5 name="lightbulb" style={styles.icon} />
             </View>
 
             <View style={styles.container}>  

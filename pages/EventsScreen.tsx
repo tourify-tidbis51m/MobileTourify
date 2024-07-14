@@ -25,7 +25,6 @@ const Events = () => {
     );
     return (
         <SafeAreaView style={styles.background}>
-            <TitleButton/>
             <FlatList
                 data={events}
                 renderItem={renderItem}
@@ -44,19 +43,19 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
-        paddingBottom: 80,  
+        marginTop: 30,
+        paddingBottom: 80,
     },
     listItem: {
         flex: 1,
         borderWidth: 1,
-        width: width * 0.8,
+        width: width * 0.9,
         height: height * 0.4,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        margin: 10,
+        margin: 20,
         padding: 20,
         backgroundColor: '#203e4a',
     },
@@ -83,14 +82,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: "bold",
-    },
-    buttonStart: {
-        backgroundColor: '#3b6978',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: 10,
     },
 });
 

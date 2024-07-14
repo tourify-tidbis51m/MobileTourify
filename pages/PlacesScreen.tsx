@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     listItem: {
         flex: 1,
         borderWidth: 1,
-        width: width * 0.8,
+        width: width * 0.9,
         height: height * 0.4,
         justifyContent: 'center',
         alignItems: 'center',

@@ -42,8 +42,8 @@ const MainMenu = ({ navigation }) => {
             <View style={styles.content}>
                 <Carousel
                     loop
-                    width={width}
-                    height={width / 2}
+                    width={width * 0.9} // Responsive width
+                    height={width / 2} // Adjust height relative to width
                     autoPlay={true}
                     autoPlayInterval={2000}
                     data={imagePaths}
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 100, 
+        marginTop: height * 0.1, // Responsive top margin
     },
     carouselItem: {
         flex: 1,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        marginHorizontal: 10,
+        marginHorizontal: width * 0.0025, // Responsive horizontal margin
     },
     carouselImage: {
         width: '100%',
@@ -108,31 +108,31 @@ const styles = StyleSheet.create({
     },
     Phrase: {
         color: "white",
-        fontSize: 30,
+        fontSize: width * 0.08, // Responsive font size
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: 20, 
+        marginTop: height * 0.02, // Responsive top margin
     },
     Text: {
         color: "gray",
-        fontSize: 20,
+        fontSize: width * 0.05, // Responsive font size
         textAlign: "center",
-        margin: 20,
+        margin: height * 0.02, // Responsive margin
     },
     buttonText: {
         color: 'white',
-        fontSize: 20,
+        fontSize: width * 0.05, // Responsive font size
         fontWeight: "bold",
     },
     buttonContainer: {
         borderRadius: 5,
         overflow: 'hidden',
-        marginTop: 20,
+        marginTop: height * 0.02, // Responsive top margin
     },
     buttonStart: {
         backgroundColor: '#203e4a',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingVertical: height * 0.015, // Responsive vertical padding
+        paddingHorizontal: width * 0.1, // Responsive horizontal padding
         borderRadius: 5,
         alignItems: 'center',
     },
