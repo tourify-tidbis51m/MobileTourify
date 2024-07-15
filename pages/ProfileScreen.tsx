@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginVertical: 20,
+        textAlign: 'center',
     },
     userInfo: {
         width: '100%',

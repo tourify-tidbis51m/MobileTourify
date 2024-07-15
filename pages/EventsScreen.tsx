@@ -1,25 +1,47 @@
-import React from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Dimensions, Image, FlatList, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import TitleButton from '../components/titlebutton';
+import useAuth from '../hooks/useAuth';
+import eventService from '../services/eventService';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
-const events = [
-    { id: '1', title: 'Santa Rita Feria', description: 'Feria de Santa Rita de Chihuahua is an event held in the city of Chihuahua that brings together the best artists of the city. And the best on mecanics games', image: 'https://www.elheraldodechihuahua.com.mx/incoming/9hgteg-feria-santa-rita/alternates/LANDSCAPE_480/Feria%20Santa%20Rita' },
-    { id: '2', title: 'Junior H Concert', description: 'Junior H presents a concert in the city of Chihuahua where we will be performing his best songs like "Lady Gaga", "Extssy Model" and others!' , image: 'https://www.adrnetworks.mx/wp-content/uploads/2023/08/Foro-Sol.jpg' },
-    { id: '3', title: 'Mercadito BIS', description: 'Descripción mamalona que me da flojera insertar bien y q voy a traer de la base de datos', image: 'https://www.elheraldodechihuahua.com.mx/incoming/9hgteg-feria-santa-rita/alternates/LANDSCAPE_480/Feria%20Santa%20Rita' },
-];
-
 const Events = () => {
-    const navigation  = useNavigation();
+    const navigation = useNavigation();
+    const { user } = useAuth();
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadEvents = async () => {
+            if (!user || !user.token) {
+                setError('User not authenticated');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const eventsData = await eventService.fetchEvents(user.token);
+                if (eventsData) {
+                    setEvents(eventsData);
+                } else {
+                    setError('Failed to fetch events');                }
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadEvents();
+    }, [user]);
 
     const renderItem = ({ item }) => (
         <View style={styles.listItem}>
             <Image source={{ uri: item.image }} style={styles.eventImage} />
-            <Text style={styles.Phrase}>{item.title}</Text>
+            <Text style={styles.Phrase}>{item.name}</Text>
             <Text style={styles.Text}>{item.description}</Text>
         </View>
     );
@@ -28,7 +50,7 @@ const Events = () => {
             <FlatList
                 data={events}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 contentContainerStyle={styles.content}
             />
         </SafeAreaView>
@@ -75,7 +97,7 @@ const styles = StyleSheet.create({
     Text: {
         color: "gray",
         fontSize: 16,
-        textAlign: "center",
+        textAlign: "justify",
         margin: 10,
     },
     buttonText: {

@@ -1,25 +1,40 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native';
 import useAuth from '../hooks/useAuth';
 import TitleButton from '../components/titlebutton';
 import { useNavigation } from '@react-navigation/native';
+import editProfileService from '../services/editProfileService';
 
 const Settings = () => {
-    const { user, logout } = useAuth();
+    const { user, setUser } = useAuth();
     const navigation = useNavigation();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
-    const [country, setCountry] = useState(user?.country || '');
-    const [password, setPassword] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
 
-    const handleSaveChanges = () => {
-        // Implementar lógica para guardar cambios
-        Alert.alert("Changes Saved!");
+    const handleSaveChanges = async () => {
+        console.log(user, user.id, user.token);
+        if (!user || !user.id || !user.token) {
+            setModalMessage("User ID or token is missing.");
+            setModalVisible(true);
+            return;
+        }
+
+        try {
+            const updatedUser = await editProfileService.updateProfile(user.token, user.id, name, email);
+            setUser(updatedUser.user); // Actualiza el contexto del usuario con los nuevos datos
+            setModalMessage("Tú perfil se ha actualizado correctamente.");
+            setModalVisible(true);
+        } catch (error) {
+            setModalMessage(error.message);
+            setModalVisible(true);
+        }
     };
 
     const handleDeleteProfile = () => {
-        // Implementar lógica para eliminar perfil
-        Alert.alert("Profile Deleted!");
+        setModalMessage("Profile Deleted!");
+        setModalVisible(true);
     };
 
     return (
@@ -53,15 +68,6 @@ const Settings = () => {
                         keyboardType="email-address"
                     />
                 </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Password</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
-                </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
                         <Text style={styles.buttonText}>Save Changes</Text>
@@ -74,6 +80,25 @@ const Settings = () => {
                     </TouchableOpacity>
                 </View>
             </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>{modalMessage}</Text>
+                    <TouchableOpacity
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
@@ -165,6 +190,38 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    }
 });
 
 export default Settings;

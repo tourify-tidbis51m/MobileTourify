@@ -51,7 +51,6 @@ function AuthProvider({ children }) {
         setUser(_user);
         if (_user) {
             await AsyncStorage.setItem("@authData", JSON.stringify(_user));
-            console.log({ _user });
         }
 
         setLoading(false);
@@ -68,7 +67,7 @@ function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, loading, register, login, logout }}>
         {children}
         </AuthContext.Provider>
     );

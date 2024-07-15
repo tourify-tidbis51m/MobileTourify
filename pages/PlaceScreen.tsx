@@ -1,37 +1,81 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import TitleButton from '../components/titlebutton';
+import idhistoricalService from '../services/idhistoricalService';
+import useAuth from '../hooks/useAuth';
 
 const { width, height } = Dimensions.get('window');
 
 const Place = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { item } = route.params;
+    const { id } = route.params;
+    const { user } = useAuth();
+    const [place, setPlace] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    if (!item) {
+    useEffect(() => {
+        const fetchPlace = async () => {
+            if (!user || !user.token) {
+                setError('User not authenticated');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const placeData = await idhistoricalService.fetchIDHistoricals(user.token, id);
+                setPlace(placeData);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPlace();
+    }, [id, user]);
+
+    if (loading) {
         return (
             <View style={styles.background}>
-                <Text style={styles.errorText}>No item data found</Text>
+                <ActivityIndicator size="large" color="#3b6978" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.background}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
+
+    if (!place) {
+        return (
+            <View style={styles.background}>
+                <Text style={styles.errorText}>No place data found</Text>
             </View>
         );
     }
 
     return (
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <View style={styles.content}>
                 <View style={styles.infoWindow}>
-                    <Image source={{ uri: item.image }} style={styles.eventImage} />
-                    <Text style={styles.Phrase}>{item.title}</Text>
-                    <Text style={styles.Text}>{item.description}</Text>
-                    <TouchableOpacity style={styles.buttonStart} onPress={() => navigation.navigate('Game', { item })}>
-                        <Text style={styles.buttonText}>Game</Text>
+                    <Image source={{ uri: place.image }} style={styles.eventImage} />
+                    <Text style={styles.Phrase}>{place.name}</Text>
+                    <Text style={styles.Text}>{place.description}</Text>
+                    <Text style={styles.detailText}>Fecha de creación: {place.year}</Text>
+                    <Text style={styles.detailText}>Categoria: {place.loctype}</Text>
+                    <TouchableOpacity style={styles.buttonStart} onPress={() => navigation.navigate('Game', { place })}>
+                        <Text style={styles.buttonText}>Start Game</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -39,14 +83,20 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         backgroundColor: '#0D1B2A',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     content: {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 20,
         paddingBottom: 80,
+        marginBottom: 30,
+    },
+    detailText: {
+        color: "white",
+        fontSize: 14,
+        textAlign: "center",
+        marginVertical: 5,
+        alignSelf: 'stretch',
     },
     infoWindow: {
         width: width * 0.85,
@@ -76,7 +126,7 @@ const styles = StyleSheet.create({
     Text: {
         color: "gray",
         fontSize: 16,
-        textAlign: "center",
+        textAlign: "justify",
         marginVertical: 10,
     },
     buttonText: {

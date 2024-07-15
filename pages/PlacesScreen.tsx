@@ -1,43 +1,67 @@
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '../hooks/useAuth';
+import placeService from '../services/placeService';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 
-const places = [
-    { id: '1', title: 'Quinta Gameros', description: 'Quinta Gameros is a museum.', image: 'https://elsouvenir.com/wp-content/uploads/2020/11/Quinta-Gameros-1.jpg' },
-    { id: '2', title: 'Junior H Concert', description: 'Junior H presents a concert in the city of Chihuahua where we will be performing his best songs like "Lady Gaga", "Extssy Model" and others!' , image: 'https://www.adrnetworks.mx/wp-content/uploads/2023/08/Foro-Sol.jpg' },
-    { id: '3', title: 'Mercadito BIS', description: 'Descripción mamalona que me da flojera insertar bien y q voy a traer de la base de datos', image: 'https://www.elheraldodechihuahua.com.mx/incoming/9hgteg-feria-santa-rita/alternates/LANDSCAPE_480/Feria%20Santa%20Rita' },
-]
-
 const Places = () => {
-    const navigation  = useNavigation();
+    const navigation = useNavigation();
+    const { user } = useAuth();
+    const [places, setPlaces] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadPlaces = async () => {
+            if (!user || !user.token) {
+                setError('User not authenticated');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const placesData = await placeService.fetchHistoricals(user.token);
+                if (placesData) {
+                    setPlaces(placesData);
+                } else {
+                    setError('Failed to fetch events');                }
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPlaces();
+    }, [user]);
 
     const renderItem = ({ item }) => (
         <View style={styles.listItem}>
             <Image source={{ uri: item.image }} style={styles.eventImage} />
-            <Text style={styles.Phrase}>{item.title}</Text>
-            <Text style={styles.Text}>{item.description}</Text>
+            <Text style={styles.Phrase}>{item.name}</Text>
             <TouchableOpacity 
                 style={styles.buttonStart} 
-                onPress={() => navigation.navigate('Place', { item })}
+                onPress={() => navigation.navigate('Place', { id: item._id })}
             >
                 <Text style={styles.buttonText}>View Details</Text>
             </TouchableOpacity>
         </View>
     );
+
     return (
         <SafeAreaView style={styles.background}>
             <FlatList
                 data={places}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 contentContainerStyle={styles.content}
             />
         </SafeAreaView>
     );
-
-}
+};
 
 const styles = StyleSheet.create({
     background: {
@@ -76,12 +100,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 10,
     },
-    Text: {
-        color: "gray",
-        fontSize: 16,
-        textAlign: "center",
-        margin: 10,
-    },
     buttonText: {
         color: 'white',
         fontSize: 16,
@@ -95,5 +113,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
     },
-})
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: 20,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 20,
+    },
+});
+
 export default Places;

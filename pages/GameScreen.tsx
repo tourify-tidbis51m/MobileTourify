@@ -28,9 +28,9 @@ const Game = () => {
 
     const checkWord = () => {
         if (selectedLetters.join('') === correctWord) {
-            Alert.alert('Correct!', 'You have spelled the word correctly!');
+            console.log('Correct!', 'You have spelled the word correctly!');
         } else {
-            Alert.alert('Try Again', 'The word is not correct. Try again!');
+            console.log('Try Again', 'The word is not correct. Try again!');
             resetGame();
         }
     };
