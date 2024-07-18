@@ -14,7 +14,6 @@ const Settings = () => {
     const [modalMessage, setModalMessage] = useState('');
 
     const handleSaveChanges = async () => {
-        console.log(user, user.id, user.token);
         if (!user || !user.id || !user.token) {
             setModalMessage("User ID or token is missing.");
             setModalVisible(true);
@@ -24,7 +23,7 @@ const Settings = () => {
         try {
             const updatedUser = await editProfileService.updateProfile(user.token, user.id, name, email);
             setUser(updatedUser.user); // Actualiza el contexto del usuario con los nuevos datos
-            setModalMessage("Tú perfil se ha actualizado correctamente.");
+            setModalMessage("Tu perfil se ha actualizado correctamente.");
             setModalVisible(true);
         } catch (error) {
             setModalMessage(error.message);
@@ -32,9 +31,25 @@ const Settings = () => {
         }
     };
 
-    const handleDeleteProfile = () => {
-        setModalMessage("Profile Deleted!");
-        setModalVisible(true);
+    const handleDeleteProfile = async () => {
+        if (!user || !user.id || !user.token) {
+            setModalMessage("User ID or token is missing.");
+            setModalVisible(true);
+            return;
+        }
+
+        try {
+            await editProfileService.deleteProfile(user.token, user.id);
+            setUser(null); // Eliminar el usuario del contexto
+            setModalMessage("Perfil eliminado correctamente.");
+            setModalVisible(true);
+
+            // Navegar a la pantalla de inicio de sesión u otra pantalla
+            navigation.navigate('Login');
+        } catch (error) {
+            setModalMessage(error.message);
+            setModalVisible(true);
+        }
     };
 
     return (

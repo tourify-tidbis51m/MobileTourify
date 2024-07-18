@@ -1,13 +1,35 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
 import useAuth from '../hooks/useAuth';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import TitleButton from '../components/titlebutton';
+import commentService from '../services/commentService';
 
 const Profile = () => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigation = useNavigation();
+    const [comment, setComment] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+
+    const handleSendComment = async () => {
+        if (!comment.trim()) {
+            setModalMessage('Por favor, escribe un comentario.');
+            setModalVisible(true);
+            return;
+        }
+
+        try {
+            await commentService.sendComment(user.token, user.id, comment);
+            setModalMessage('Comentario enviado con éxito.');
+            setModalVisible(true);
+            setComment('');
+        } catch (error) {
+            setModalMessage(error.message);
+            setModalVisible(true);
+        }
+    };
 
     return (
         <ScrollView style={styles.container}>
@@ -44,15 +66,33 @@ const Profile = () => {
                     multiline={true}
                     numberOfLines={4}
                     placeholder="Escribe tu comentario aquí..."
+                    value={comment}
+                    onChangeText={setComment}
                 />
-                <TouchableOpacity style={styles.submitButton}>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSendComment}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
             </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(!modalVisible)}
+            >
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>{modalMessage}</Text>
+                    <TouchableOpacity
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -66,6 +106,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 100,
         marginTop: 75,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
     },
     profileImageContainer: {
         borderWidth: 4,
