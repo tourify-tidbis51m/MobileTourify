@@ -9,7 +9,6 @@ import MainMenuScreen from '../pages/MainMenuScreen';
 import MapScreen from '../pages/MapScreen';
 import ProfileScreen from '../pages/ProfileScreen';
 import Events from '../pages/EventsScreen';
-import Game from '../pages/GameScreen';
 import Places from '../pages/PlacesScreen';
 import Place from '../pages/PlaceScreen';
 import Model3D from '../pages/Model3D';
@@ -37,10 +36,6 @@ function AppStack() {
                 <Stack.Screen
                     name="Events"
                     component={Events}
-                />
-                <Stack.Screen
-                    name="Game"
-                    component={Game}
                 />
                 <Stack.Screen
                     name="Places"

@@ -1,11 +1,38 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
+import { useMap } from '../hooks/mapHooks';
+import useAuth from '../hooks/useAuth';
+
+const { width, height } = Dimensions.get('window');
 
 const Map = () => {
+    const { loading, error } = useMap();
+    const { logout } = useAuth();
+
+    if (loading) {
+        return (
+            <View style={styles.background}>
+                <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.background}>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.background}>
             <View style={styles.content}>
-                <Text style={styles.title}>Mao</Text>
+                <Text style={styles.title}>Map</Text>
                 <Text style={styles.description}>
                     This is where the map will be displayed.
                 </Text>
@@ -17,7 +44,6 @@ const Map = () => {
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        resizeMode: 'repeat',
         backgroundColor: '#0D1B2A',
         justifyContent: 'center',
         alignItems: 'center',
@@ -43,10 +69,28 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
     },
-    buttonText: {
+    loadingText: {
         color: 'white',
         fontSize: 20,
+        marginTop: 20,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 20,
+        textAlign: 'center',
+        marginTop: 20,
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E',
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
         fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.045,
     },
 });
 

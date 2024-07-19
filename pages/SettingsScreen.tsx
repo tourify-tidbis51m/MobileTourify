@@ -1,56 +1,50 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, ScrollView, Modal } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, Modal, Dimensions, ActivityIndicator } from 'react-native';
 import useAuth from '../hooks/useAuth';
+import { useSettings } from '../hooks/settingsHooks';
 import TitleButton from '../components/titlebutton';
 import { useNavigation } from '@react-navigation/native';
-import editProfileService from '../services/editProfileService';
+
+const { width, height } = Dimensions.get('window');
 
 const Settings = () => {
     const { user, setUser } = useAuth();
+    const { logout } = useAuth();
     const navigation = useNavigation();
-    const [name, setName] = useState(user?.name || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
+    const {
+        name,
+        setName,
+        email,
+        setEmail,
+        modalVisible,
+        setModalVisible,
+        modalMessage,
+        handleSaveChanges,
+        handleDeleteProfile,
+        loading,
+        error
+    } = useSettings(user, setUser, navigation);
 
-    const handleSaveChanges = async () => {
-        if (!user || !user.id || !user.token) {
-            setModalMessage("User ID or token is missing.");
-            setModalVisible(true);
-            return;
-        }
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
 
-        try {
-            const updatedUser = await editProfileService.updateProfile(user.token, user.id, name, email);
-            setUser(updatedUser.user); // Actualiza el contexto del usuario con los nuevos datos
-            setModalMessage("Tu perfil se ha actualizado correctamente.");
-            setModalVisible(true);
-        } catch (error) {
-            setModalMessage(error.message);
-            setModalVisible(true);
-        }
-    };
-
-    const handleDeleteProfile = async () => {
-        if (!user || !user.id || !user.token) {
-            setModalMessage("User ID or token is missing.");
-            setModalVisible(true);
-            return;
-        }
-
-        try {
-            await editProfileService.deleteProfile(user.token, user.id);
-            setUser(null); // Eliminar el usuario del contexto
-            setModalMessage("Perfil eliminado correctamente.");
-            setModalVisible(true);
-
-            // Navegar a la pantalla de inicio de sesión u otra pantalla
-            navigation.navigate('Login');
-        } catch (error) {
-            setModalMessage(error.message);
-            setModalVisible(true);
-        }
-    };
+    if (error) {
+        return (
+            <View style={styles.loadingContainer}>
+                <TitleButton />
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -59,13 +53,10 @@ const Settings = () => {
                 <View style={styles.profileImageContainer}>
                     <Image
                         style={styles.profileImage}
-                        source={{ uri: `../../static/usersimages/${user?.image}` }}
+                        source={{ uri: user?.image }}
                         alt="Profile"
                     />
                 </View>
-                <TouchableOpacity style={styles.uploadButton}>
-                    <Text style={styles.uploadButtonText}>Upload avatar</Text>
-                </TouchableOpacity>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>User Name</Text>
                     <TextInput
@@ -98,11 +89,9 @@ const Settings = () => {
 
             <Modal
                 animationType="slide"
-                transparent={true}
+                transparent
                 visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
+                onRequestClose={() => setModalVisible(!modalVisible)}
             >
                 <View style={styles.modalView}>
                     <Text style={styles.modalText}>{modalMessage}</Text>
@@ -125,92 +114,87 @@ const styles = StyleSheet.create({
     },
     profileCard: {
         backgroundColor: '#203e4a',
-        margin: 20,
+        margin: width * 0.05,
         borderRadius: 10,
-        padding: 20,
+        padding: width * 0.05,
         alignItems: 'center',
-        marginBottom: 100,
-        marginTop: 75,
+        marginBottom: height * 0.1,
+        marginTop: height * 0.1,
     },
     profileImageContainer: {
         borderWidth: 4,
         borderColor: '#3B82F6',
-        borderRadius: 100,
+        borderRadius: width * 0.3,
         overflow: 'hidden',
-        marginBottom: 20,
+        marginBottom: height * 0.02,
     },
     profileImage: {
-        width: 120,
-        height: 120,
-    },
-    uploadButton: {
-        backgroundColor: '#3b6978',
-        padding: 10,
-        borderRadius: 5,
-        gap: 10,
-        marginBottom: 20,
-    },
-    uploadButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        width: width * 0.4,
+        height: width * 0.4,
     },
     inputContainer: {
-        marginBottom: 20,
+        marginBottom: height * 0.02,
+        width: '100%',
+        alignItems: 'center',
     },
     label: {
         color: 'white',
-        fontSize: 20,
-        marginBottom: 5,
+        fontSize: width * 0.06,
+        marginBottom: height * 0.01,
         fontWeight: 'bold',
         alignSelf: 'center',
     },
     input: {
         backgroundColor: '#1B263B',
         color: 'white',
-        padding: 10,
+        padding: width * 0.04,
         borderRadius: 5,
-        width: 300,
+        width: '80%',
+        maxWidth: 400,
+        fontSize: width * 0.05,
     },
     buttonContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        gap: 10,
-        alignSelf: 'center',
+        width: '100%',
+        marginTop: height * 0.02,
+        alignItems: 'center',
     },
     saveButton: {
         backgroundColor: '#28a745',
-        padding: 10,
+        padding: height * 0.015,
         borderRadius: 5,
-        flex: 1,
-        marginRight: 5,
-        width: 150,
+        marginBottom: height * 0.01,
+        width: '80%',
+        maxWidth: 400,
     },
     cancelButton: {
         backgroundColor: '#3b6978',
-        padding: 10,
+        padding: height * 0.015,
         borderRadius: 5,
-        flex: 1,
-        marginRight: 5,
-        width: 150,
+        marginBottom: height * 0.01,
+        width: '80%',
+        maxWidth: 400,
     },
     deleteButton: {
         backgroundColor: '#dc3545',
-        padding: 10,
+        padding: height * 0.015,
         borderRadius: 5,
-        flex: 1,
-        width: 150,
+        width: '80%',
+        maxWidth: 400,
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: width * 0.05,
     },
     modalView: {
-        margin: 20,
-        backgroundColor: "white",
+        margin: width * 0.05,
+        backgroundColor: '#203e4a',
         borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
+        padding: width * 0.05,
+        alignItems: 'center',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -218,25 +202,59 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
+        borderColor: 'white',
+        borderWidth: 2,
+        justifyContent: 'center',
     },
     button: {
         borderRadius: 20,
-        padding: 10,
+        padding: height * 0.015,
         elevation: 2
     },
     buttonClose: {
-        backgroundColor: "#2196F3",
+        backgroundColor: '#3b6978',
     },
     textStyle: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center"
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.05
     },
     modalText: {
-        marginBottom: 15,
-        textAlign: "center"
-    }
+        marginBottom: height * 0.05,
+        color: 'white',
+        textAlign: 'center',
+        fontSize: width * 0.05
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0D1B2A',
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: width * 0.05,
+        marginTop: 10,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: width * 0.05,
+        textAlign: 'center',
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E', // Color para el botón de cerrar sesión
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.045,
+    },
 });
 
 export default Settings;

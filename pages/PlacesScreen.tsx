@@ -1,42 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { usePlaces } from '../hooks/placesHooks';
 import useAuth from '../hooks/useAuth';
-import placeService from '../services/placeService';
 
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
+const { width, height } = Dimensions.get('window');
 
 const Places = () => {
     const navigation = useNavigation();
-    const { user } = useAuth();
-    const [places, setPlaces] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const loadPlaces = async () => {
-            if (!user || !user.token) {
-                setError('User not authenticated');
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const placesData = await placeService.fetchHistoricals(user.token);
-                if (placesData) {
-                    setPlaces(placesData);
-                } else {
-                    setError('Failed to fetch events');                }
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadPlaces();
-    }, [user]);
+    const { places, loading, error } = usePlaces();
+    const { logout } = useAuth();
 
     const renderItem = ({ item }) => (
         <View style={styles.listItem}>
@@ -50,6 +23,26 @@ const Places = () => {
             </TouchableOpacity>
         </View>
     );
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.loadingContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.background}>
@@ -71,60 +64,75 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
-        paddingBottom: 80,
+        paddingVertical: height * 0.02,
+        marginBottom: height * 0.07,
     },
     listItem: {
-        flex: 1,
         borderWidth: 1,
         width: width * 0.9,
-        height: height * 0.4,
+        height: height * 0.35,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        margin: 10,
-        padding: 20,
+        marginVertical: height * 0.02,
+        padding: width * 0.05,
         backgroundColor: '#203e4a',
     },
     eventImage: {
-        width: width * 0.6,
+        width: width * 0.7,
         height: height * 0.2,
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: height * 0.01,
+        marginTop: height * 0.2,
     },
     Phrase: {
         color: "white",
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: 10,
+        marginVertical: height * 0.01,
     },
     buttonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: width * 0.05,
         fontWeight: "bold",
     },
     buttonStart: {
         backgroundColor: '#3b6978',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingVertical: height * 0.015,
+        paddingHorizontal: width * 0.1,
         borderRadius: 5,
         alignItems: 'center',
-        marginTop: 10,
+        marginBottom: height * 0.2,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#0D1B2A',
     },
     loadingText: {
         color: 'white',
-        fontSize: 20,
+        fontSize: width * 0.05,
+        marginTop: 10,
     },
     errorText: {
         color: 'red',
-        fontSize: 20,
+        fontSize: width * 0.05,
+        textAlign: 'center',
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E',
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.045,
     },
 });
 

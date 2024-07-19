@@ -1,55 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, FlatList, SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, Text, View, Dimensions, Image, FlatList, SafeAreaView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useEvents } from '../hooks/eventsHooks';
 import useAuth from '../hooks/useAuth';
-import eventService from '../services/eventService';
 
-const width = Dimensions.get('screen').width;
-const height = Dimensions.get('screen').height;
+const { width, height } = Dimensions.get('window');
 
 const Events = () => {
-    const navigation = useNavigation();
-    const { user } = useAuth();
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { events, loading, error } = useEvents();
+    const { logout } = useAuth();
 
-    useEffect(() => {
-        const loadEvents = async () => {
-            if (!user || !user.token) {
-                setError('User not authenticated');
-                setLoading(false);
-                return;
-            }
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
 
-            try {
-                const eventsData = await eventService.fetchEvents(user.token);
-                if (eventsData) {
-                    setEvents(eventsData);
-                } else {
-                    setError('Failed to fetch events');                }
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
-        loadEvents();
-    }, [user]);
-
-    const renderItem = ({ item }) => (
-        <View style={styles.listItem}>
-            <Image source={{ uri: item.image }} style={styles.eventImage} />
-            <Text style={styles.Phrase}>{item.name}</Text>
-            <Text style={styles.Text}>{item.description}</Text>
-        </View>
-    );
     return (
         <SafeAreaView style={styles.background}>
             <FlatList
                 data={events}
-                renderItem={renderItem}
+                renderItem={({ item }) => (
+                    <View style={styles.listItem}>
+                        <Image source={{ uri: item.image }} style={styles.eventImage} />
+                        <Text style={styles.Phrase}>{item.name}</Text>
+                        <Text style={styles.Text}>{item.description}</Text>
+                    </View>
+                )}
                 keyExtractor={item => item._id}
                 contentContainerStyle={styles.content}
             />
@@ -65,8 +55,8 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
-        paddingBottom: 80,
+        padding: width * 0.05,
+        marginBottom: height * 0.07,
     },
     listItem: {
         flex: 1,
@@ -77,33 +67,60 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        margin: 20,
-        padding: 20,
+        marginVertical: height * 0.02,
         backgroundColor: '#203e4a',
     },
     eventImage: {
-        width: width * 0.6,
+        width: '100%',
         height: height * 0.2,
         borderRadius: 10,
         marginBottom: 10,
     },
     Phrase: {
         color: "white",
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: 10,
+        marginVertical: height * 0.01,
     },
     Text: {
         color: "gray",
-        fontSize: 16,
-        textAlign: "justify",
-        margin: 10,
+        fontSize: width * 0.05,
+        textAlign: "center",
+        marginHorizontal: width * 0.05,
+        marginBottom: height * 0.03,
     },
-    buttonText: {
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0D1B2A',
+    },
+    loadingText: {
         color: 'white',
-        fontSize: 16,
-        fontWeight: "bold",
+        fontSize: width * 0.05,
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0D1B2A',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: width * 0.05,
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E',
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.045,
     },
 });
 

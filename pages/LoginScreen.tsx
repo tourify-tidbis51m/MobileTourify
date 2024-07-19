@@ -1,32 +1,26 @@
 import React, { useRef, useState } from 'react';
 import { Animated, TextInput, Text, View, TouchableOpacity, ImageBackground, StyleSheet, Dimensions, Image } from 'react-native';
 import useAuth from '../hooks/useAuth';
+import { useLoginHooks } from '../hooks/loginHooks';
 
 const { width, height } = Dimensions.get('screen');
 
 const Login = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
     const { login, loading } = useAuth();
+
+    const {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        handlePressIn,
+        handlePressOut,
+        scaleAnim,
+    } = useLoginHooks();
+
     const handleLogin = async () => {
         await login(email, password);
-    };
-
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-
-    const handlePressIn = () => {
-        Animated.spring(scaleAnim, {
-            toValue: 0.95,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const handlePressOut = () => {
-        Animated.spring(scaleAnim, {
-            toValue: 1,
-            useNativeDriver: true,
-        }).start();
     };
 
     return (
@@ -68,7 +62,7 @@ const Login = ({ navigation }) => {
                     style={styles.buttonContainer}
                 >
                     <Animated.View style={[styles.buttonSecondary, { transform: [{ scale: scaleAnim }] }]}>
-                        <Text style={styles.buttonText}>¿Todavía no tienes una cuenta?</Text>
+                        <Text style={styles.buttonTextSecondary}>¿Todavía no tienes una cuenta?</Text>
                     </Animated.View>
                 </TouchableOpacity>
             </View>
@@ -87,38 +81,40 @@ const styles = StyleSheet.create({
         height: height,
     },
     logo: {
-        width: width * 0.3,
-        height: height * 0.2,
+        width: width * 0.4,
+        height: height * 0.25,
         resizeMode: 'contain',
         marginBottom: 20,
     },
     container: {
-        backgroundColor: '#E0E1DD',
+        backgroundColor: '#FFFFFF',
         padding: 20,
         borderRadius: 10,
         width: '90%',
+        maxWidth: 400,
         alignItems: 'center',
     },
     labelTitle: {
         color: '#1B263B',
         fontWeight: 'bold',
-        fontSize: 36,
+        fontSize: 28,
         marginBottom: 20,
     },
     label: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#1B263B',
         marginBottom: 10,
         alignSelf: 'flex-start',
     },
     input: {
-        height: 40,
-        borderColor: '#415A77',
+        height: 30,
+        borderColor: '#7F7F7F',
         borderBottomWidth: 1,
         marginBottom: 20,
         paddingHorizontal: 10,
         width: '100%',
         color: '#1B263B',
+        fontSize: 18,
     },
     buttonContainer: {
         width: '100%',
@@ -132,7 +128,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonSecondary: {
-        backgroundColor: '#203e4a',
+        backgroundColor: 'transparent',
         paddingVertical: 12,
         paddingHorizontal: 25,
         borderRadius: 5,
@@ -145,11 +141,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
     },
-    errorText: {
-        color: 'red',
-        marginBottom: 10,
+    buttonTextSecondary: {
+        color: '#1B263B',
+        fontWeight: 'bold',
+        fontSize: 18,
     },
 });
 
 export default Login;
-

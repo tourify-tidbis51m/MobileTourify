@@ -1,50 +1,27 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Dimensions, Image } from 'react-native';
 import TitleButton from '../components/titlebutton'; 
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';
 import image3 from '../assets/image3.jpg';
+import { useMainMenuHooks } from '../hooks/mainHooks'; // Asegúrate de que el hook esté exportado correctamente
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const { width, height } = Dimensions.get('window');
 
 const MainMenu = ({ navigation }) => {
-
-    // Array de importaciones de imágenes locales
-    const imagePaths = [
-        image1,
-        image2,
-        image3,
-    ];
-
-    // La animación del botón
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-
-    const handlePressIn = () => {
-        Animated.spring(scaleAnim, {
-            toValue: 0.95,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const handlePressOut = () => {
-        Animated.spring(scaleAnim, {
-            toValue: 1,
-            useNativeDriver: true,
-        }).start();
-        navigation.navigate('Map')
-    };
+    const imagePaths = [image1, image2, image3];
+    const { scaleAnim, handlePressIn, handlePressOut } = useMainMenuHooks(navigation);
 
     return (
         <View style={styles.background}>
-            <TitleButton/>
+            <TitleButton />
             <View style={styles.content}>
                 <Carousel
                     loop
-                    width={width * 0.9} // Responsive width
-                    height={width / 2} // Adjust height relative to width
-                    autoPlay={true}
+                    width={width * 0.9}
+                    height={width * 0.5}
+                    autoPlay
                     autoPlayInterval={2000}
                     data={imagePaths}
                     scrollAnimationDuration={1000}
@@ -58,8 +35,10 @@ const MainMenu = ({ navigation }) => {
                     )}
                 />
                 <View style={styles.textContainer}>
-                    <Text style={styles.Phrase}>"Descubre la magia de cada destino."</Text>
-                    <Text style={styles.Text}>Explora lo inexplorado, experimenta lo extraordinario y deja que tus viajes se conviertan en el lienzo de tu historia única</Text>            
+                    <Text style={styles.phrase}>"Descubre la magia de cada destino."</Text>
+                    <Text style={styles.text}>
+                        Explora lo inexplorado, experimenta lo extraordinario y deja que tus viajes se conviertan en el lienzo de tu historia única
+                    </Text>            
                     <TouchableOpacity
                         onPressIn={handlePressIn}
                         onPressOut={handlePressOut}
@@ -78,22 +57,21 @@ const MainMenu = ({ navigation }) => {
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        resizeMode: 'repeat',
         backgroundColor: '#0D1B2A',
     },
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: height * 0.1, // Responsive top margin
+        marginTop: height * 0.09,
+        paddingBottom: height * 0.05, 
     },
     carouselItem: {
         flex: 1,
-        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        marginHorizontal: width * 0.0025, // Responsive horizontal margin
+        marginHorizontal: width * 0.01, 
     },
     carouselImage: {
         width: '100%',
@@ -101,38 +79,38 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     textContainer: {
-        height: height * 0.4,
-        width: width * 0.8,
-        justifyContent: 'center',
+        width: width * 0.9,
         alignItems: 'center',
+        marginTop: height * 0.02,
+        paddingHorizontal: width * 0.05,
     },
-    Phrase: {
+    phrase: {
         color: "white",
-        fontSize: width * 0.08, // Responsive font size
+        fontSize: width * 0.06,
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: height * 0.02, // Responsive top margin
+        marginTop: height * 0.02,
     },
-    Text: {
+    text: {
         color: "gray",
-        fontSize: width * 0.05, // Responsive font size
+        fontSize: width * 0.04,
         textAlign: "center",
-        margin: height * 0.02, // Responsive margin
+        marginVertical: height * 0.02,
     },
     buttonText: {
         color: 'white',
-        fontSize: width * 0.05, // Responsive font size
+        fontSize: width * 0.05,
         fontWeight: "bold",
     },
     buttonContainer: {
         borderRadius: 5,
         overflow: 'hidden',
-        marginTop: height * 0.02, // Responsive top margin
+        marginTop: height * 0.02,
     },
     buttonStart: {
         backgroundColor: '#203e4a',
-        paddingVertical: height * 0.015, // Responsive vertical padding
-        paddingHorizontal: width * 0.1, // Responsive horizontal padding
+        paddingVertical: height * 0.015,
+        paddingHorizontal: width * 0.1,
         borderRadius: 5,
         alignItems: 'center',
     },

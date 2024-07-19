@@ -1,121 +1,47 @@
-import React, { useRef, useState, useContext } from 'react';
-import { Image, Dimensions, ImageBackground, Animated, TextInput, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useContext } from 'react';
+import { Image, Dimensions, Animated, TextInput, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../providers/AuthProvider';
+import { useRegisterScreenHooks } from '../hooks/registerHooks';
 
-const { width, height } = Dimensions.get('window');
-
+const { width } = Dimensions.get('window');
 
 const RegisterScreen = ({ navigation }) => {
+  const {
+    name,
+    email,
+    password,
+    passwordConfirm,
+    nameError,
+    emailError,
+    passwordError,
+    passwordConfirmError,
+    scaleAnim,
+    handleName,
+    handleEmail,
+    handlePassword,
+    handlePasswordConfirm,
+    isFormValid,
+    handlePressIn,
+    handlePressOut,
+  } = useRegisterScreenHooks();
 
-  //Constantes que uso principalmente para controlar las validaciones
-  const [name, setName] = useState('');
-  const [nameVerify, setNameVerify] = useState(false);
-  const [nameError, setNameError] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailVerify, setEmailVerify] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordVerify, setPasswordVerify] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [passwordConfirmVerify, setPasswordConfirmVerify] = useState(false);
-  const [passwordConfirmError, setPasswordConfirmError] = useState('');
   const { register } = useContext(AuthContext);
-
-  //Animaciones
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  //Funciones de validaciones
-  function handleName(e) {
-    const nameVar = e.nativeEvent.text;
-    setName(nameVar);
-    setNameVerify(false);
-    setNameError('');
-
-    const regex = /\d/;
-    if (regex.test(nameVar)) {
-      setNameError('El nombre contiene números.');
-    } else if (nameVar.length > 1) {
-      setNameVerify(true);
-    }
-  }
-
-  function handleEmail(e) {
-    const emailVar = e.nativeEvent.text;
-    setEmail(emailVar);
-    setEmailVerify(false);
-    setEmailError('');
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailVar)) {
-      setEmailError('El correo no es válido.');
-    } else if (emailVar.length > 1) {
-      setEmailVerify(true);
-    }
-  }
-
-  function handlePassword(e) {
-    const passwordVar = e.nativeEvent.text;
-    setPassword(passwordVar);
-    setPasswordVerify(false);
-    setPasswordError('');
-
-    if (passwordVar.length < 6) {
-      setPasswordError('La contraseña debe tener al menos 6 caracteres.');
-    } else if (passwordVar.length > 1) {
-      setPasswordVerify(true);
-    }
-  }
-
-  const handlePasswordConfirm = (e) => {
-    const passwordConfirmVar = e.nativeEvent.text;
-    setPasswordConfirm(passwordConfirmVar);
-    setPasswordConfirmVerify(false);
-    setPasswordConfirmError('');
-
-    if (passwordConfirmVar !== password) {
-      setPasswordConfirmError('Las contraseñas no coinciden.');
-    } else if (passwordConfirmVar.length > 1) {
-      setPasswordConfirmVerify(true);
-    }
-  }
-
-  //Funcion para validar el formulario
-  const isFormValid = () => {
-    return nameVerify && emailVerify && passwordVerify && passwordConfirmVerify && !nameError && !emailError && !passwordError && !passwordConfirmError;
-  }
-
-  //Funciones de animaciones
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const handleRegister = async () => {
     await register(name, email, password);
   };
 
-  //Renderizado
   return (
-    <ImageBackground style={styles.background}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.logoContainer}>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
       </View>
       <View style={styles.container}>
         <Text style={styles.labelTitle}>TOURIFY</Text>
-        
+
         <Text style={styles.label}>Ingresa tu nombre:</Text>
-        <View style={styles.inputContainer}>
+        <View style={styles.inputWrapper}>
           <TextInput 
             style={styles.input} 
             placeholder="Nombre" 
@@ -123,29 +49,29 @@ const RegisterScreen = ({ navigation }) => {
             onChange={handleName}
             value={name}
           />
-          {name.length >= 1 && !nameError && (
-            <MaterialIcons 
-              name="check-circle" 
-              size={20} 
-              color="green" 
-              style={styles.icon} 
-            />
-          )}
-          {nameError && (
-            <MaterialIcons 
-              name="error" 
-              size={20} 
-              color="red" 
-              style={styles.icon} 
-            />
-          )}
+          <View style={styles.iconContainer}>
+            {name.length >= 1 && !nameError && (
+              <MaterialIcons 
+                name="check-circle" 
+                size={24} 
+                color="green" 
+              />
+            )}
+            {nameError && (
+              <MaterialIcons 
+                name="error" 
+                size={24} 
+                color="red" 
+              />
+            )}
+          </View>
         </View>
         {nameError && (
           <Text style={styles.errorText}>{nameError}</Text>
         )}
 
         <Text style={styles.label}>Ingresa tu correo:</Text>
-        <View style={styles.inputContainer}>
+        <View style={styles.inputWrapper}>
           <TextInput 
             style={styles.input} 
             placeholder="Correo" 
@@ -153,29 +79,29 @@ const RegisterScreen = ({ navigation }) => {
             onChange={handleEmail}
             value={email}
           />
-          {email.length >= 1 && !emailError && (
-            <MaterialIcons
-              name="check-circle"
-              size={20}
-              color="green"
-              style={styles.icon}
-            />
-          )}
-          {emailError && (
-            <MaterialIcons
-              name="error"
-              size={20}
-              color="red"
-              style={styles.icon}
-            />
-          )}
+          <View style={styles.iconContainer}>
+            {email.length >= 1 && !emailError && (
+              <MaterialIcons
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {emailError && (
+              <MaterialIcons
+                name="error"
+                size={24}
+                color="red"
+              />
+            )}
+          </View>
         </View>
         {emailError && (
           <Text style={styles.errorText}>{emailError}</Text>
         )}
 
         <Text style={styles.label}>Ingresa tu contraseña:</Text>
-        <View style={styles.inputContainer}>
+        <View style={styles.inputWrapper}>
           <TextInput 
             style={styles.input} 
             placeholder="Contraseña" 
@@ -184,57 +110,58 @@ const RegisterScreen = ({ navigation }) => {
             onChange={handlePassword}
             value={password}
           />
-          {password.length >= 1 && !passwordError && (
-            <MaterialIcons
-              name="check-circle"
-              size={20}
-              color="green"
-              style={styles.icon}
-            />
-          )}
-          {passwordError && (
-            <MaterialIcons
-              name="error"
-              size={20}
-              color="red"
-              style={styles.icon}
-            />
-          )}
+          <View style={styles.iconContainer}>
+            {password.length >= 1 && !passwordError && (
+              <MaterialIcons
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {passwordError && (
+              <MaterialIcons
+                name="error"
+                size={24}
+                color="red"
+              />
+            )}
+          </View>
         </View>
         {passwordError && (
           <Text style={styles.errorText}>{passwordError}</Text>
         )}
 
         <Text style={styles.label}>Repite tu contraseña:</Text>
-        <View style={styles.inputContainer}>
+        <View style={styles.inputWrapper}>
           <TextInput 
             style={styles.input} 
             placeholder="Contraseña repetida" 
             placeholderTextColor="#B0B0B0" 
             secureTextEntry 
             onChange={handlePasswordConfirm}
+            value={passwordConfirm}
           />
-          {passwordConfirm.length >= 1 && !passwordConfirmError && (
-            <MaterialIcons
-              name="check-circle"
-              size={20}
-              color="green"
-              style={styles.icon}
-            />
-          )}
-          {passwordConfirmError && (
-            <MaterialIcons
-              name="error"
-              size={20}
-              color="red"
-              style={styles.icon}
-            />
-          )}
+          <View style={styles.iconContainer}>
+            {passwordConfirm.length >= 1 && !passwordConfirmError && (
+              <MaterialIcons
+                name="check-circle"
+                size={24}
+                color="green"
+              />
+            )}
+            {passwordConfirmError && (
+              <MaterialIcons
+                name="error"
+                size={24}
+                color="red"
+              />
+            )}
+          </View>
         </View>
         {passwordConfirmError && (
           <Text style={styles.errorText}>{passwordConfirmError}</Text>
         )}
-        
+
         <TouchableOpacity
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -258,103 +185,110 @@ const RegisterScreen = ({ navigation }) => {
           </Animated.View>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    backgroundColor: '#0D1B2A',
-    justifyContent: 'center',
+  scrollContainer: {
+    flexGrow: 1,
     alignItems: 'center',
-    width: width,
-    height: height,
+    justifyContent: 'center',
+    backgroundColor: '#0D1B2A',
   },
   logoContainer: {
     alignItems: 'center',
-    top: 120
+    marginTop: 20,
+    marginBottom: 20,
   },
   logo: {
-    width: width * 0.3,
-    height: height * 0.2,
+    width: width * 0.4,
+    height: width * 0.4,
     resizeMode: 'contain',
   },
   container: {
-    backgroundColor: '#E0E1DD',
+    width: '90%',
+    maxWidth: 400,
+    backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 10,
-    width: '90%',
     alignItems: 'center',
-    marginTop: -200
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 20,
   },
   labelTitle: {
-    color: '#1B263B',
+    fontSize: 28,
     fontWeight: 'bold',
-    fontSize: 24,
+    color: '#0D1B2A',
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
     color: '#1B263B',
+    fontSize: 20,
     marginBottom: 10,
     alignSelf: 'flex-start',
   },
-  input: {
-    height: 40,
-    borderColor: '#415A77',
-    borderBottomWidth: 1,
-    marginBottom: 5,
-    paddingHorizontal: 10,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
+    marginBottom: 5,
+  },
+  input: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7F7F7F',
+    paddingHorizontal: 10,
     color: '#1B263B',
+    marginBottom: 12,
+    height: 30,
+    fontSize: 18,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    marginLeft: 10,
+    height: 50,
   },
   buttonContainer: {
+    marginTop: 20,
     width: '100%',
-    marginBottom: 10,
   },
   button: {
     backgroundColor: '#1B263B',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
+    paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   buttonSecondary: {
-    backgroundColor: '#203e4a',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
+    marginTop: 5,
+    paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
+    backgroundColor: 'transparent'
   },
   buttonText: {
-    color: '#E0E1DD',
+    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 18,
-    textAlign: 'center',
   },
   buttonTextSecondary: {
-    color: '#E0E1DD',
+    color: '#1B263B',
     fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    width: '100%',
-  },
-  icon: {
-    marginLeft: 10,
+    fontSize: 18,
   },
   errorText: {
-    marginLeft: 20,
     color: 'red',
-    bottom: 10,
-  }
+    fontSize: 16,
+    alignSelf: 'center',
+    marginTop: -15,
+  },
 });
 
 export default RegisterScreen;
-

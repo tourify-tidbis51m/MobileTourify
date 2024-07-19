@@ -1,54 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import idhistoricalService from '../services/idhistoricalService';
+import React from 'react';
+import { View, Text, Image, StyleSheet, Dimensions, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { usePlace } from '../hooks/placeHooks';
 import useAuth from '../hooks/useAuth';
 
 const { width, height } = Dimensions.get('window');
 
 const Place = () => {
-    const navigation = useNavigation();
     const route = useRoute();
     const { id } = route.params;
-    const { user } = useAuth();
-    const [place, setPlace] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchPlace = async () => {
-            if (!user || !user.token) {
-                setError('User not authenticated');
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const placeData = await idhistoricalService.fetchIDHistoricals(user.token, id);
-                setPlace(placeData);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPlace();
-    }, [id, user]);
+    const { place, loading, error } = usePlace(id);
+    const { logout } = useAuth();
 
     if (loading) {
         return (
-            <View style={styles.background}>
+            <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
             </View>
         );
     }
 
     if (error) {
         return (
-            <View style={styles.background}>
+            <View style={styles.loadingContainer}>
                 <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -56,7 +35,10 @@ const Place = () => {
     if (!place) {
         return (
             <View style={styles.background}>
-                <Text style={styles.errorText}>No place data found</Text>
+                <Text style={styles.errorText}>No se ha podido traer los lugares. Intente de nuevo en otro momento.</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -67,12 +49,9 @@ const Place = () => {
                 <View style={styles.infoWindow}>
                     <Image source={{ uri: place.image }} style={styles.eventImage} />
                     <Text style={styles.Phrase}>{place.name}</Text>
-                    <Text style={styles.Text}>{place.description}</Text>
                     <Text style={styles.detailText}>Fecha de creación: {place.year}</Text>
-                    <Text style={styles.detailText}>Categoria: {place.loctype}</Text>
-                    <TouchableOpacity style={styles.buttonStart} onPress={() => navigation.navigate('Game', { place })}>
-                        <Text style={styles.buttonText}>Start Game</Text>
-                    </TouchableOpacity>
+                    <Text style={styles.detailText}>Categoría: {place.loctype}</Text>
+                    <Text style={styles.Text}>{place.description}</Text>
                 </View>
             </View>
         </ScrollView>
@@ -87,20 +66,19 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
-        paddingBottom: 80,
-        marginBottom: 30,
+        padding: width * 0.05,
+        marginBottom: height * 0.08,
     },
     detailText: {
         color: "white",
-        fontSize: 14,
+        fontSize: width * 0.05,
         textAlign: "center",
         marginVertical: 5,
         alignSelf: 'stretch',
     },
     infoWindow: {
-        width: width * 0.85,
-        padding: 20,
+        width: width * 0.9,
+        padding: width * 0.05,
         borderRadius: 10,
         backgroundColor: '#203e4a',
         shadowColor: '#000',
@@ -111,42 +89,52 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     eventImage: {
-        width: width * 0.75,
+        width: width * 0.85,
         height: height * 0.25,
         borderRadius: 10,
         marginBottom: 20,
     },
     Phrase: {
         color: "white",
-        fontSize: 24,
+        fontSize: width * 0.07,
         fontWeight: "bold",
         textAlign: "center",
         marginVertical: 10,
     },
     Text: {
         color: "gray",
-        fontSize: 16,
+        fontSize: width * 0.05,
         textAlign: "justify",
         marginVertical: 10,
     },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    buttonStart: {
-        backgroundColor: '#3b6978',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#0D1B2A',
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: width * 0.05,
         marginTop: 10,
     },
     errorText: {
         color: 'red',
-        fontSize: 18,
+        fontSize: width * 0.05,
         textAlign: 'center',
-    }
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E',
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: width * 0.045,
+    },
 });
 
 export default Place;

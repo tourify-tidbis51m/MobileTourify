@@ -6,7 +6,7 @@ import useAuth from "../hooks/useAuth";
 import { SafeAreaView } from "react-native";
 
 function Router() {
-  const demo = useAuth(); // Utilizamos el hook useAuth para obtener el estado de autenticación
+  const demo = useAuth(); // Utilizamos el hook para obtener el estado de autenticación
 
   return (  
     <NavigationContainer>

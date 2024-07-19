@@ -1,35 +1,60 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, TextInput, Modal, Dimensions, ActivityIndicator } from 'react-native';
+import { useProfile } from '../hooks/profileHooks';
 import useAuth from '../hooks/useAuth';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import TitleButton from '../components/titlebutton';
-import commentService from '../services/commentService';
+
+
+const { width, height } = Dimensions.get('window');
 
 const Profile = () => {
+    const { logout } = useAuth();
     const { user } = useAuth();
     const navigation = useNavigation();
-    const [comment, setComment] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
+    const {
+        comment,
+        setComment,
+        modalVisible,
+        setModalVisible,
+        modalMessage,
+        handleSendComment,
+        loading,
+        error,
+    } = useProfile();
 
-    const handleSendComment = async () => {
-        if (!comment.trim()) {
-            setModalMessage('Por favor, escribe un comentario.');
-            setModalVisible(true);
-            return;
-        }
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#3b6978" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
 
-        try {
-            await commentService.sendComment(user.token, user.id, comment);
-            setModalMessage('Comentario enviado con éxito.');
-            setModalVisible(true);
-            setComment('');
-        } catch (error) {
-            setModalMessage(error.message);
-            setModalVisible(true);
-        }
-    };
+    if (error) {
+        return (
+            <View style={styles.loadingContainer}>
+                <TitleButton />
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    if (!user) {
+        return (
+            <View style={styles.loadingContainer}>
+                <TitleButton />
+                <Text style={styles.errorText}>No se encontró la información del usuario</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -38,11 +63,11 @@ const Profile = () => {
                 <View style={styles.profileImageContainer}>
                     <Image
                         style={styles.profileImage}
-                        source={{ uri: `../../static/usersimages/${user?.image}` }}
+                        source={{ uri: user.image }}
                         alt="Profile"
                     />
                 </View>
-                <Text style={styles.sectionTitle}>¡Bienvenido, {user?.name || 'Usuario'}!</Text>
+                <Text style={styles.sectionTitle}>¡Bienvenido, {user.name || 'Usuario'}!</Text>
                 <View style={styles.userInfo}>
                     <Text style={styles.infoLabel}>Nombre</Text>
                     <Text style={styles.infoText}>{user?.name || 'No disponible'}</Text>
@@ -63,20 +88,20 @@ const Profile = () => {
                 <Text style={styles.commentLabel}>¿Has tenido algún problema o te gustaría añadir algo a la aplicación?</Text>
                 <TextInput
                     style={styles.textArea}
-                    multiline={true}
+                    multiline
                     numberOfLines={4}
                     placeholder="Escribe tu comentario aquí..."
                     value={comment}
                     onChangeText={setComment}
                 />
-                <TouchableOpacity style={styles.submitButton} onPress={handleSendComment}>
-                    <Text style={styles.buttonText}>Submit</Text>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSendComment} disabled={loading}>
+                    <Text style={styles.buttonText}>Enviar</Text>
                 </TouchableOpacity>
             </View>
 
             <Modal
                 animationType="slide"
-                transparent={true}
+                transparent
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(!modalVisible)}
             >
@@ -86,13 +111,14 @@ const Profile = () => {
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}
                     >
-                        <Text style={styles.textStyle}>Close</Text>
+                        <Text style={styles.textStyle}>Cerrar</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
         </ScrollView>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -100,18 +126,18 @@ const styles = StyleSheet.create({
     },
     profileCard: {
         backgroundColor: '#203e4a',
-        margin: 20,
+        margin: width * 0.05,
         borderRadius: 10,
-        padding: 20,
+        padding: width * 0.05,
         alignItems: 'center',
-        marginBottom: 100,
-        marginTop: 75,
+        marginBottom: height * 0.1,
+        marginTop: height * 0.1,
     },
     modalView: {
-        margin: 20,
-        backgroundColor: "white",
+        margin: width * 0.05,
+        backgroundColor: '#203e4a',
         borderRadius: 20,
-        padding: 35,
+        padding: width * 0.05,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -120,35 +146,41 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
+        borderColor: 'white',
+        borderWidth: 2,
+        justifyContent: 'center',
     },
     textStyle: {
         color: "white",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: width * 0.05
     },
     modalText: {
-        marginBottom: 15,
-        textAlign: "center"
+        marginBottom: height * 0.05,
+        color: 'white',
+        textAlign: "center",
+        fontSize: width * 0.05
     },
     buttonClose: {
-        backgroundColor: "#2196F3",
+        backgroundColor: '#3b6978',
     },
     profileImageContainer: {
         borderWidth: 4,
         borderColor: '#3B82F6',
-        borderRadius: 100,
+        borderRadius: width * 0.3,
         overflow: 'hidden',
     },
     profileImage: {
-        width: 120,
-        height: 120,
+        width: width * 0.4,
+        height: width * 0.4,
     },
     sectionTitle: {
         color: 'white',
-        fontSize: 24,
+        fontSize: width * 0.08,
         fontWeight: 'bold',
-        marginVertical: 20,
+        marginVertical: height * 0.02,
         textAlign: 'center',
     },
     userInfo: {
@@ -157,75 +189,89 @@ const styles = StyleSheet.create({
     },
     infoLabel: {
         color: 'white',
-        fontSize: 18,
+        fontSize: width * 0.05,
         fontWeight: 'bold',
-        marginTop: 10,
+        marginTop: height * 0.01,
     },
     infoText: {
         color: 'white',
-        fontSize: 16,
-        marginBottom: 10,
+        fontSize: width * 0.045,
+        marginBottom: height * 0.015,
     },
     buttonContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        width: 'auto',
-        marginHorizontal: 20,
-        gap: 20,
-        marginTop: 20,
+        width: '100%',
+        marginHorizontal: width * 0.05,
+        gap: height * 0.02,
+        marginTop: height * 0.02,
     },
     button: {
         backgroundColor: '#3b6978',
-        padding: 10,
+        padding: height * 0.015,
         borderRadius: 5,
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: width * 0.045,
     },
     commentSectionTitle: {
         color: 'white',
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
-        marginVertical: 20,
+        marginVertical: height * 0.02,
     },
     commentLabel: {
         color: 'white',
-        fontSize: 16,
-        marginBottom: 10,
+        fontSize: width * 0.045,
+        marginBottom: height * 0.015,
         textAlign: 'center',
     },
     textArea: {
         width: '100%',
-        height: 100,
+        height: height * 0.15,
         backgroundColor: '#334155',
         color: 'white',
-        padding: 10,
+        padding: width * 0.04,
         borderRadius: 5,
         textAlignVertical: 'top',
+        fontSize: width * 0.04,
     },
     submitButton: {
         backgroundColor: '#3b6978',
-        padding: 10,
+        padding: height * 0.015,
         borderRadius: 5,
-        marginTop: 20,
+        marginTop: height * 0.02,
     },
-    settingsButton: {
-        backgroundColor: '#203e4a',
-        borderRadius: 8,
-        padding: 10,
-        marginTop: 20,
-        width: '80%',
-        alignItems: 'center',
+    loadingContainer: {
+        flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#0D1B2A',
     },
-    settingsButtonText: {
+    loadingText: {
         color: 'white',
-        fontSize: 20,
+        fontSize: width * 0.05,
+        marginTop: 10,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: width * 0.05,
+        textAlign: 'center',
+    },
+    logoutButton: {
+        backgroundColor: '#BF1E2E',
+        padding: height * 0.015,
+        borderRadius: 5,
+        marginTop: height * 0.02,
+    },
+    logoutButtonText: {
+        color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: width * 0.045,
     },
 });
 
