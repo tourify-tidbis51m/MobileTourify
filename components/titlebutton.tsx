@@ -10,7 +10,7 @@ const titlebutton = () => {
         <TouchableOpacity onPress={logout}>
             <View style={styles.containter}>
                 <Image source={require('../assets/logo.png')} style={styles.logo} />
-                <Text style={styles.title}> Tourify</Text>
+                <Text style={styles.title}> Cerrar sesión</Text>
             </View>
         </TouchableOpacity>
     );
