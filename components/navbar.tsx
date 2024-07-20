@@ -1,30 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
     const navigation = useNavigation();
+    const [activeButton, setActiveButton] = useState('');
+
+    const handlePress = (screen, buttonName) => {
+        setActiveButton(buttonName);
+        navigation.navigate(screen);
+    };
 
     return (
         <View style={styles.navbarContainer}>
             <View style={styles.navbar}>
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity
+                    style={[
+                        styles.navButton,
+                        activeButton === 'Home' && styles.navButtonPressed
+                    ]}
+                    onPress={() => handlePress('Home', 'Home')}
+                >
                     <Image source={require('../assets/home_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Events')}>
+                <TouchableOpacity
+                    style={[
+                        styles.navButton,
+                        activeButton === 'Events' && styles.navButtonPressed
+                    ]}
+                    onPress={() => handlePress('Events', 'Events')}
+                >
                     <Image source={require('../assets/events_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.navButton, styles.navButtonCenter]} onPress={() => navigation.navigate('Profile')}>
+                <TouchableOpacity
+                    style={[
+                        styles.navButton,
+                        styles.navButtonCenter,
+                        activeButton === 'Profile' && styles.navButtonPressed
+                    ]}
+                    onPress={() => handlePress('Profile', 'Profile')}
+                >
                     <Image source={require('../assets/user_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Places')}>
+                <TouchableOpacity
+                    style={[
+                        styles.navButton,
+                        activeButton === 'Places' && styles.navButtonPressed
+                    ]}
+                    onPress={() => handlePress('Places', 'Places')}
+                >
                     <Image source={require('../assets/places_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Map')}>
+                <TouchableOpacity
+                    style={[
+                        styles.navButton,
+                        activeButton === 'Map' && styles.navButtonPressed
+                    ]}
+                    onPress={() => handlePress('Map', 'Map')}
+                >
                     <Image source={require('../assets/map_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
             </View>
@@ -43,7 +80,7 @@ const styles = StyleSheet.create({
     },
     navbar: {
         flexDirection: 'row',
-        justifyContent: 'space-evenly', 
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         width: '100%',
         padding: 10,
@@ -51,7 +88,7 @@ const styles = StyleSheet.create({
     navButton: {
         width: 60,
         height: 60,
-        borderRadius: 30, 
+        borderRadius: 30,
         backgroundColor: 'white',
         borderWidth: 7,
         borderColor: '#1A2B3C',
@@ -60,7 +97,7 @@ const styles = StyleSheet.create({
         top: -50,
     },
     navButtonCenter: {
-        width: 80, 
+        width: 80,
         height: 80,
         borderRadius: 40,
     },
