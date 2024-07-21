@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "Tourify",
+    "slug": "Tourify",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logotourify.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -15,16 +15,27 @@
       "supportsTablet": true
     },
     "android": {
+      "config":{
+        "googleMaps": { 
+          "apiKey": "AIzaSyCIag49rrDzQYkJqA6IHGp3rU27-Lgi5LU" 
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tourify.myapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "031e986d-27c6-4a2f-988e-48c37ceac41f"
+      }
+    }
   }
 }

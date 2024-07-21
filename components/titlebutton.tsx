@@ -7,7 +7,7 @@ const titlebutton = () => {
     const { logout } = useAuth();
 
     return (
-        <TouchableOpacity onPress={logout}>
+        <TouchableOpacity onPress={logout} style={styles.touchable}>
             <View style={styles.containter}>
                 <Image source={require('../assets/logo.png')} style={styles.logo} />
                 <Text style={styles.title}> Cerrar sesión</Text>
@@ -17,6 +17,9 @@ const titlebutton = () => {
 }
 
 const styles = StyleSheet.create({
+    touchable: {
+        zIndex: 1000,
+    },
     containter: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -25,6 +28,7 @@ const styles = StyleSheet.create({
         position: 'absolute', 
         top: 20,
         bottom: 10, 
+        marginTop: 28
     },
     title: {
         fontSize: 30,

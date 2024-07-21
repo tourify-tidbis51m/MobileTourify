@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, FlatList, 
 import { useNavigation } from '@react-navigation/native';
 import { usePlaces } from '../hooks/placesHooks';
 import useAuth from '../hooks/useAuth';
+import TitleButton from '../components/titlebutton'; 
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,6 +24,9 @@ const Places = () => {
             </TouchableOpacity>
         </View>
     );
+    const renderFooter = () => (
+        <View style={styles.footerSpacer} />
+    );
 
     if (loading) {
         return (
@@ -34,25 +38,24 @@ const Places = () => {
     }
 
     if (error) {
-        return (
-            <View style={styles.loadingContainer}>
-                <Text style={styles.errorText}>{error}</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-            </View>
-        );
+        logout();
     }
 
     return (
-        <SafeAreaView style={styles.background}>
-            <FlatList
-                data={places}
-                renderItem={renderItem}
-                keyExtractor={item => item._id}
-                contentContainerStyle={styles.content}
-            />
-        </SafeAreaView>
+        <View style={styles.background}>
+            <TitleButton />
+            <View style={styles.content}>
+                <SafeAreaView style={styles.safearea}>
+                    <FlatList
+                        data={places}
+                        renderItem={renderItem}
+                        keyExtractor={item => item._id}
+                        contentContainerStyle={styles.content}
+                        ListFooterComponent={renderFooter}
+                    />
+                </SafeAreaView>
+            </View>
+        </View>
     );
 };
 
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        marginVertical: height * 0.02,
+        marginBottom: height * 0.03,
         padding: width * 0.05,
         backgroundColor: '#203e4a',
     },
@@ -133,6 +136,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: width * 0.045,
+    },
+    safearea: {
+        marginTop: height * 0.17,
+        height: height * 1,
+    },
+    footerSpacer: {
+        height: height * .15,
     },
 });
 
