@@ -11,7 +11,7 @@ const Museum = () => {
     const { logout } = useAuth();
 
     const openWebsite = () => {
-        Linking.openURL('https://gitmoji.dev/');
+        Linking.openURL('https://webtourify.onrender.com');
     };
 
     if (loading) {

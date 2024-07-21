@@ -11,8 +11,10 @@ import useAuth from "../hooks/useAuth";
 import locationsService from "../services/locationService";
 import MapView, { Marker } from "react-native-maps";
 import MapModal from "../components/mapModal";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 
 const Map = () => {
+  const { logout } = useAuth();
   const { user } = useAuth();
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,16 +68,13 @@ const Map = () => {
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>Error: {error.message}</Text>
-      </View>
-    );
+    logout();
   }
 
   return (
     <View style={styles.container}>
-      <MapView 
+      <MapView
+        provider={PROVIDER_GOOGLE}
         style={styles.map} 
         initialRegion={{
           latitude: 28.643951810520395,
