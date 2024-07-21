@@ -33,28 +33,14 @@ const Profile = () => {
     }
 
     if (error) {
-        return (
-            <View style={styles.loadingContainer}>
-                <TitleButton />
-                <Text style={styles.errorText}>{error}</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-            </View>
-        );
+        logout();
     }
 
     if (!user) {
-        return (
-            <View style={styles.loadingContainer}>
-                <TitleButton />
-                <Text style={styles.errorText}>No se encontró la información del usuario</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-            </View>
-        );
+        logout();
     }
+
+    console.log(user);
 
     return (
         <ScrollView style={styles.container}>
@@ -131,7 +117,7 @@ const styles = StyleSheet.create({
         padding: width * 0.05,
         alignItems: 'center',
         marginBottom: height * 0.1,
-        marginTop: height * 0.1,
+        marginTop: height * 0.12,
     },
     modalView: {
         margin: width * 0.05,

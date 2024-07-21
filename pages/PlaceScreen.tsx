@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Dimensions, ScrollView, ActivityIndicato
 import { useRoute } from '@react-navigation/native';
 import { usePlace } from '../hooks/placeHooks';
 import useAuth from '../hooks/useAuth';
+import TitleButton from '../components/titlebutton'; 
 
 const { width, height } = Dimensions.get('window');
 
@@ -44,17 +45,20 @@ const Place = () => {
     }
 
     return (
-        <ScrollView style={styles.background}>
-            <View style={styles.content}>
-                <View style={styles.infoWindow}>
-                    <Image source={{ uri: place.image }} style={styles.eventImage} />
-                    <Text style={styles.Phrase}>{place.name}</Text>
-                    <Text style={styles.detailText}>Fecha de creación: {place.year}</Text>
-                    <Text style={styles.detailText}>Categoría: {place.loctype}</Text>
-                    <Text style={styles.Text}>{place.description}</Text>
+        <View style={styles.background}>
+            <TitleButton/>
+            <ScrollView style={styles.safearea}>
+                <View style={styles.content}>
+                    <View style={styles.infoWindow}>
+                        <Image source={{ uri: place.image }} style={styles.eventImage} />
+                        <Text style={styles.Phrase}>{place.name}</Text>
+                        <Text style={styles.detailText}>Fecha de creación: {place.year}</Text>
+                        <Text style={styles.detailText}>Categoría: {place.loctype}</Text>
+                        <Text style={styles.Text}>{place.description}</Text>
+                    </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
@@ -134,6 +138,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: width * 0.045,
+    },
+    safearea: {
+        marginTop: height * 0.12,
+        height: height * 1,
     },
 });
 

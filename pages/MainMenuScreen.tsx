@@ -18,6 +18,7 @@ const MainMenu = ({ navigation }) => {
             <TitleButton />
             <View style={styles.content}>
                 <Carousel
+                    style={styles.carousel}
                     loop
                     width={width * 0.9}
                     height={width * 0.5}
@@ -55,6 +56,9 @@ const MainMenu = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    carousel: {
+        margin: height * .04,
+    },
     background: {
         flex: 1,
         backgroundColor: '#0D1B2A',
@@ -85,6 +89,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: width * 0.05,
     },
     phrase: {
+        paddingTop: height * .26,
         color: "white",
         fontSize: width * 0.06,
         fontWeight: "bold",
