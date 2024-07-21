@@ -1,97 +1,125 @@
-import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
-import { useMap } from '../hooks/mapHooks';
-import useAuth from '../hooks/useAuth';
-
-const { width, height } = Dimensions.get('window');
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Text,
+  Image,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import useAuth from "../hooks/useAuth";
+import locationsService from "../services/locationService";
+import MapView, { Marker } from "react-native-maps";
+import MapModal from "../components/mapModal";
 
 const Map = () => {
-    const { loading, error } = useMap();
-    const { logout } = useAuth();
+  const { user } = useAuth();
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
-    if (loading) {
-        return (
-            <View style={styles.background}>
-                <ActivityIndicator size="large" color="#3b6978" />
-                <Text style={styles.loadingText}>Loading...</Text>
-            </View>
-        );
+  const pinTypeImages = {
+    event: "https://cdn-icons-png.flaticon.com/512/1968/1968779.png",
+    restaurant: "https://cdn-icons-png.flaticon.com/512/948/948036.png",
+    "Lugar Histórico": "https://cdn-icons-png.flaticon.com/512/1501/1501479.png",
+    Museo: "https://cdn-icons-png.flaticon.com/512/2747/2747427.png",
+    Teatro: "https://cdn-icons-png.flaticon.com/512/571/571940.png",
+    "Pueblo Mágico": "https://cdn-icons-png.flaticon.com/512/1151/1151658.png",
+    Monumento: "https://cdn-icons-png.flaticon.com/512/3655/3655070.png",
+  };
+
+  const getImageUri = (location) => {
+    if (location.pintype == "historical") {
+      return pinTypeImages[location.loctype];
+    } else {
+      return pinTypeImages[location.pintype];
     }
+  };
 
-    if (error) {
-        return (
-            <View style={styles.background}>
-                <Text style={styles.errorText}>{error}</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
+  useEffect(() => {
+    const fetchLocations  = async () => {
+      try {
+        const data = await locationsService.fetchLocations(user.token);
+        setLocations(data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+    fetchLocations();
+  }, [user.token]);
 
+  const handleMarkerPress = (location) => {
+    setSelectedLocation(location);
+    setModalVisible(true);
+  };
+
+  if (loading) {
     return (
-        <View style={styles.background}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Map</Text>
-                <Text style={styles.description}>
-                    This is where the map will be displayed.
-                </Text>
-            </View>
-        </View>
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
     );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <MapView 
+        style={styles.map} 
+        initialRegion={{
+          latitude: 28.643951810520395,
+          longitude: -106.0729363634578,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+      >
+        {locations.map((location) => (
+          <Marker
+            key={location._id}
+            coordinate={{
+              latitude: parseFloat(location.coordinate.split(", ")[0]),
+              longitude: parseFloat(location.coordinate.split(", ")[1]),
+            }}
+            onPress={() => handleMarkerPress(location)}
+          >
+            <Image
+              source={{ uri: getImageUri(location) }}
+              style={{ width: 25, height: 25 }}
+            />
+          </Marker>
+        ))}
+        
+      </MapView>
+      {selectedLocation && (
+        <MapModal 
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          location={selectedLocation}
+        />
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        backgroundColor: '#0D1B2A',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    content: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#203e4a',
-        borderRadius: 10,
-        padding: 20,
-        width: '80%',
-    },
-    title: {
-        color: 'white',
-        fontSize: 30,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    description: {
-        color: 'gray',
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    loadingText: {
-        color: 'white',
-        fontSize: 20,
-        marginTop: 20,
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 20,
-        textAlign: 'center',
-        marginTop: 20,
-    },
-    logoutButton: {
-        backgroundColor: '#BF1E2E',
-        padding: height * 0.015,
-        borderRadius: 5,
-        marginTop: height * 0.02,
-    },
-    logoutButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: width * 0.045,
-    },
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
 });
 
 export default Map;

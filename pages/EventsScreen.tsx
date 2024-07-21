@@ -39,9 +39,6 @@ const Events = () => {
                         <View style={styles.listItem}>
                             <View style={styles.imageContainer}>
                                     <Image source={{ uri: item.image }} style={styles.eventImage} />
-                                    <TouchableOpacity style={styles.button} onPress={() => alert('Ir')}>
-                                        <Text style={styles.buttonText}>Mapa</Text>
-                                    </TouchableOpacity>
                                     <View style={styles.textContainer}>
                                         <Text style={styles.txt}>Fecha: {item.date}</Text>
                                         <Text style={styles.txt}>Hora: {item.time}</Text>
