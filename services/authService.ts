@@ -24,15 +24,16 @@ async function login(email, password) {
     }
 }
 
-async function register(name, email, password) {
+async function register(name, email, password, image) {
     try {
-        const response = await fetch(`${authHost}users/`, {
+        const response = await fetch(`${authHost}users/registermobile`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name,
                 email,
                 password,
+                image,
             }),
         });
     console.log(response)

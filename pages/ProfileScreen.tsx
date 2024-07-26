@@ -5,7 +5,6 @@ import useAuth from '../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import TitleButton from '../components/titlebutton';
 
-
 const { width, height } = Dimensions.get('window');
 
 const Profile = () => {
@@ -83,6 +82,10 @@ const Profile = () => {
                 <TouchableOpacity style={styles.submitButton} onPress={handleSendComment} disabled={loading}>
                     <Text style={styles.buttonText}>Enviar</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                    <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
 
             <Modal
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
         padding: width * 0.05,
         alignItems: 'center',
         marginBottom: height * 0.1,
-        marginTop: height * 0.12,
+        marginTop: height * 0.1,
     },
     modalView: {
         margin: width * 0.05,

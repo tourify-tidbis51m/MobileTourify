@@ -1,16 +1,17 @@
 import React from "react";
 import { TouchableOpacity, View, Image, Text, StyleSheet } from "react-native";
 import useAuth from "../hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
 
 const titlebutton = () => {
-
+    const navigation = useNavigation();
     const { logout } = useAuth();
 
     return (
-        <TouchableOpacity onPress={logout} style={styles.touchable}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.touchable}>
             <View style={styles.containter}>
                 <Image source={require('../assets/logo.png')} style={styles.logo} />
-                <Text style={styles.title}> Cerrar sesión</Text>
+                <Text style={styles.title}> Tourify</Text>
             </View>
         </TouchableOpacity>
     );
@@ -24,21 +25,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: '60%',
-        padding: 20,
+        padding: 10,
         position: 'absolute', 
-        top: 20,
-        bottom: 10, 
+        top: 10,
+        bottom: 0, 
         marginTop: 28
     },
     title: {
-        fontSize: 30,
+        fontSize: 26,
         color: '#fff',
         flex: 1,
         textAlign: 'left',
     },
     logo: {
-        width: 50,
-        height: 50,
+        width: 68,
+        height: 68,
         resizeMode: 'center',
     },
 });

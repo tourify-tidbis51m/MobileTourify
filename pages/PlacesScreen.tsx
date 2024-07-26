@@ -14,7 +14,9 @@ const Places = () => {
 
     const renderItem = ({ item }) => (
         <View style={styles.listItem}>
-            <Image source={{ uri: item.image }} style={styles.eventImage} />
+            <View style={styles.imageContainer}>
+                <Image source={{ uri: item.image }} style={styles.eventImage} />
+            </View>
             <Text style={styles.Phrase}>{item.name}</Text>
             <TouchableOpacity 
                 style={styles.buttonStart} 
@@ -23,9 +25,6 @@ const Places = () => {
                 <Text style={styles.buttonText}>View Details</Text>
             </TouchableOpacity>
         </View>
-    );
-    const renderFooter = () => (
-        <View style={styles.footerSpacer} />
     );
 
     if (loading) {
@@ -43,7 +42,7 @@ const Places = () => {
 
     return (
         <View style={styles.background}>
-            <TitleButton />
+            <TitleButton style={styles.titleButton} />
             <View style={styles.content}>
                 <SafeAreaView style={styles.safearea}>
                     <FlatList
@@ -51,7 +50,6 @@ const Places = () => {
                         renderItem={renderItem}
                         keyExtractor={item => item._id}
                         contentContainerStyle={styles.content}
-                        ListFooterComponent={renderFooter}
                     />
                 </SafeAreaView>
             </View>
@@ -64,16 +62,21 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0D1B2A',
     },
+    titleButton: {
+        position: 'absolute',
+        top: height * 0.05,
+        left: width * 0.05,
+        zIndex: 1,
+    },
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: height * 0.02,
-        marginBottom: height * 0.07,
-    },
+        marginBottom: height * 0.2, //Esto lo uso para "elevar" el contenido para que no choque con la navbar
+    }, 
     listItem: {
         borderWidth: 1,
         width: width * 0.9,
-        height: height * 0.35,
+        height: height * 0.60,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -83,11 +86,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#203e4a',
     },
     eventImage: {
-        width: width * 0.7,
-        height: height * 0.2,
+        width: '100%',
+        height: '100%',
         borderRadius: 10,
-        marginBottom: height * 0.01,
-        marginTop: height * 0.2,
     },
     Phrase: {
         color: "white",
@@ -95,19 +96,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginVertical: height * 0.01,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: width * 0.05,
-        fontWeight: "bold",
-    },
-    buttonStart: {
-        backgroundColor: '#3b6978',
-        paddingVertical: height * 0.015,
-        paddingHorizontal: width * 0.1,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginBottom: height * 0.2,
     },
     loadingContainer: {
         flex: 1,
@@ -138,11 +126,29 @@ const styles = StyleSheet.create({
         fontSize: width * 0.045,
     },
     safearea: {
-        marginTop: height * 0.17,
+        marginTop: height * 0.1,
         height: height * 1,
     },
-    footerSpacer: {
-        height: height * .15,
+    imageContainer: {
+        position: 'relative',
+        width: width * 0.9,
+        height: height * 0.45,
+        justifyContent: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: width * 0.055,
+        fontWeight: "bold",
+        paddingVertical: 8,
+        paddingHorizontal: 8,
+    },
+    buttonStart: {
+        backgroundColor: '#3b6978',
+        paddingVertical: height * 0.012,
+        paddingHorizontal: width * 0.1,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginBottom: height * 0.01,
     },
 });
 

@@ -5,7 +5,7 @@ import TitleButton from '../components/titlebutton';
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';
 import image3 from '../assets/image3.jpg';
-import { useMainMenuHooks } from '../hooks/mainHooks'; // Asegúrate de que el hook esté exportado correctamente
+import { useMainMenuHooks } from '../hooks/mainHooks';
 
 const { width, height } = Dimensions.get('window');
 
@@ -56,9 +56,6 @@ const MainMenu = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    carousel: {
-        margin: height * .04,
-    },
     background: {
         flex: 1,
         backgroundColor: '#0D1B2A',
@@ -66,8 +63,11 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: height * 0.09,
-        paddingBottom: height * 0.05, 
+        width: '100%',
+        marginTop: height * 0.15,
+    },
+    carousel: {
+        marginVertical: height * 0.02,
     },
     carouselItem: {
         flex: 1,
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         overflow: 'hidden',
-        marginHorizontal: width * 0.01, 
     },
     carouselImage: {
         width: '100%',
@@ -83,13 +82,12 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     textContainer: {
-        width: width * 0.9,
+        width: '80%',
         alignItems: 'center',
         marginTop: height * 0.02,
         paddingHorizontal: width * 0.05,
     },
     phrase: {
-        paddingTop: height * .26,
         color: "white",
         fontSize: width * 0.06,
         fontWeight: "bold",

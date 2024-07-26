@@ -5,6 +5,9 @@ import {
   Dimensions,
   Text,
   Image,
+  ActivityIndicator,
+  TouchableOpacity,
+
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
@@ -12,6 +15,8 @@ import locationsService from "../services/locationService";
 import MapView, { Marker } from "react-native-maps";
 import MapModal from "../components/mapModal";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+
+const { width, height } = Dimensions.get("window");
 
 const Map = () => {
   const { logout } = useAuth();
@@ -61,14 +66,22 @@ const Map = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
+        <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#3b6978" />
+            <Text style={styles.loadingText}>Loading...</Text>
+        </View>
     );
   }
 
   if (error) {
-    logout();
+      return (
+          <View style={styles.loadingContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                  <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+              </TouchableOpacity>
+          </View>
+      );
   }
 
   return (
@@ -118,6 +131,34 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0D1B2A',
+  },
+  loadingText: {
+      color: 'white',
+      fontSize: width * 0.05,
+      marginTop: 10,
+  },
+  errorText: {
+      color: 'red',
+      fontSize: width * 0.05,
+      textAlign: 'center',
+  },
+  logoutButton: {
+      backgroundColor: '#BF1E2E',
+      padding: height * 0.015,
+      borderRadius: 5,
+      marginTop: height * 0.02,
+  },
+  logoutButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      fontSize: width * 0.045,
   },
 });
 

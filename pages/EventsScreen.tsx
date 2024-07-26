@@ -28,29 +28,28 @@ const Events = () => {
     }
 
     return (
-
         <View style={styles.background}>
-            <TitleButton />
+            <TitleButton style={styles.titleButton} />
             <View style={styles.content}>
                 <SafeAreaView style={styles.safearea}>
                     <FlatList
-                    data={events}
-                    renderItem={({ item }) => (
-                        <View style={styles.listItem}>
-                            <View style={styles.imageContainer}>
+                        data={events}
+                        renderItem={({ item }) => (
+                            <View style={styles.listItem}>
+                                <View style={styles.imageContainer}>
                                     <Image source={{ uri: item.image }} style={styles.eventImage} />
                                     <View style={styles.textContainer}>
                                         <Text style={styles.txt}>Fecha: {item.date}</Text>
                                         <Text style={styles.txt}>Hora: {item.time}</Text>
                                     </View>
                                 </View>
-                            <Text style={styles.Phrase}>{item.name}</Text>
-                            <Text style={styles.text}>{item.description}</Text>
-                        </View>
-                    )}
-                    keyExtractor={item => item._id}
-                    contentContainerStyle={styles.content}
-                    ListFooterComponent={renderFooter}
+                                <Text style={styles.Phrase}>{item.name}</Text>
+                                <Text style={styles.text}>{item.description}</Text>
+                            </View>
+                        )}
+                        keyExtractor={item => item._id}
+                        contentContainerStyle={styles.content}
+                        ListFooterComponent={renderFooter}
                     />
                 </SafeAreaView>
             </View>
@@ -63,11 +62,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0D1B2A',
     },
+    titleButton: {
+        position: 'absolute',
+        top: height * 0.05,
+        left: width * 0.05,
+        zIndex: 1,
+    },
     content: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: height * 0.02,
-        marginBottom: height * 0.07,
+        marginBottom: height * 0.05,
     },
     listItem: {
         borderWidth: 1,
@@ -92,14 +96,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginVertical: height * 0.01,
-    },
-    buttonStart: {
-        backgroundColor: '#3b6978',
-        paddingVertical: height * 0.015,
-        paddingHorizontal: width * 0.1,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginBottom: height * 0.2,
     },
     loadingContainer: {
         flex: 1,
@@ -130,7 +126,7 @@ const styles = StyleSheet.create({
         fontSize: width * 0.045,
     },
     safearea: {
-        marginTop: height * 0.17,
+        marginTop: height * 0.1,
         height: height * 1,
     },
     footerSpacer: {
@@ -142,11 +138,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginVertical: height * 0.01,
         paddingBottom: height * 0.01,
+        marginBottom: height * 0.04,
     },
     imageContainer: {
         position: 'relative',
         width: width * 0.9,
         height: height * 0.45,
+        justifyContent: 'flex-end',
     },
     button: {
         position: 'absolute',
@@ -167,7 +165,7 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         position: 'absolute',
-        top: 20,
+        bottom: 10,
         left: 10,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 5,
